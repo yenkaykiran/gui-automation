@@ -3,6 +3,7 @@ package com.savvisdirect.sdgui.model.entity;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.openqa.selenium.Proxy.ProxyType;
 
 import java.io.Serializable;
 
@@ -20,6 +21,7 @@ import javax.persistence.UniqueConstraint;
 @Table(name = "proxy", uniqueConstraints = @UniqueConstraint(columnNames = { "id" }))
 @AttributeOverrides(value = {
         @AttributeOverride(name = "id", column = @Column(name = "id", insertable = false, updatable = false)),
+        @AttributeOverride(name = "name", column = @Column(name = "name")),
         @AttributeOverride(name = "type", column = @Column(name = "type")),
         @AttributeOverride(name = "httpHost", column = @Column(name = "http_host")),
         @AttributeOverride(name = "httpPort", column = @Column(name = "http_port")),
@@ -30,11 +32,12 @@ public class Proxy extends BaseEntity<Integer> implements Serializable {
 
     private static final long serialVersionUID = 4289151143888117381L;
 
-    private String type;
+    private String name;
+    private ProxyType type;
     private String httpHost;
-    private String httpPort;
+    private Integer httpPort;
     private String sslHost;
-    private String sslPort;
+    private Integer sslPort;
 
     @Override
     @Id
@@ -48,11 +51,22 @@ public class Proxy extends BaseEntity<Integer> implements Serializable {
         this.id = id;
     }
 
-    public String getType() {
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public ProxyType getType() {
+        if (null == type) {
+            type = ProxyType.AUTODETECT;
+        }
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ProxyType type) {
         this.type = type;
     }
 
@@ -64,11 +78,11 @@ public class Proxy extends BaseEntity<Integer> implements Serializable {
         this.httpHost = httpHost;
     }
 
-    public String getHttpPort() {
+    public Integer getHttpPort() {
         return httpPort;
     }
 
-    public void setHttpPort(String httpPort) {
+    public void setHttpPort(Integer httpPort) {
         this.httpPort = httpPort;
     }
 
@@ -80,11 +94,11 @@ public class Proxy extends BaseEntity<Integer> implements Serializable {
         this.sslHost = sslHost;
     }
 
-    public String getSslPort() {
+    public Integer getSslPort() {
         return sslPort;
     }
 
-    public void setSslPort(String sslPort) {
+    public void setSslPort(Integer sslPort) {
         this.sslPort = sslPort;
     }
 

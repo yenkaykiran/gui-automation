@@ -1,13 +1,13 @@
-sdGuiAutoApp.controller('ProxiesController', [ '$scope', '$rootScope', 'AjaxService', '$location', '$controller', function($scope, $rootScope, AjaxService, $location, $controller) {
+sdGuiAutoApp.controller('UrlsController', [ '$scope', '$rootScope', 'AjaxService', '$location', '$controller', function($scope, $rootScope, AjaxService, $location, $controller) {
     'use strict';
     
     $controller('BaseController', {
 		$scope : $scope
 	});
     
-    $rootScope.pageTitle = "Proxies";
+    $rootScope.pageTitle = "URLs";
     
-    $scope.restUrl = "proxies/";
+    $scope.restUrl = "urls/";
     
     $scope.load = function() {
     	AjaxService.call($scope.restUrl, 'GET').success(function(data, status, headers, config) {
@@ -26,7 +26,7 @@ sdGuiAutoApp.controller('ProxiesController', [ '$scope', '$rootScope', 'AjaxServ
 	    $rootScope.temp = {
             item : data
         };
-	    $scope.openAsDialog('proxies/add.html', ev, function() {
+	    $scope.openAsDialog('urls/add.html', ev, function() {
 	        $scope.load();
 	    });
 	};
@@ -34,7 +34,7 @@ sdGuiAutoApp.controller('ProxiesController', [ '$scope', '$rootScope', 'AjaxServ
 	$scope.deleteItem = function(item, $event) {
 		$scope.confirmDialog({
 			title: 'Are you sure to delete this ?',
-			content: 'Proxy Name: ' + item.name,
+			content: 'URL Name: ' + item.name,
 			okLabel: 'Delete',
 			cancelLabel: 'Cancel'
 		}, $event, function() {
@@ -46,20 +46,17 @@ sdGuiAutoApp.controller('ProxiesController', [ '$scope', '$rootScope', 'AjaxServ
     
 } ]);
 
-sdGuiAutoApp.controller('AddEditProxyController', [ '$scope', '$rootScope', 'AjaxService', '$controller', function($scope, $rootScope, AjaxService, $controller) {
+sdGuiAutoApp.controller('AddEditUrlController', [ '$scope', '$rootScope', 'AjaxService', '$controller', function($scope, $rootScope, AjaxService, $controller) {
     'use strict';
     
     $controller('BaseController', {
 		$scope : $scope
 	});
     
-    $scope.restUrl = "proxies/";
+    $scope.restUrl = "urls/";
     
     $scope.init = function() {
         $scope.item = $rootScope.temp.item;
-        AjaxService.call('meta/proxyTypes', 'GET').success(function(data, status, headers, config) {
-            $scope.proxyTypes = data;
-        });
     };
     
     $scope.save = function() {

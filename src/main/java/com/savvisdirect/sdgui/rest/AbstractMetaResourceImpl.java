@@ -1,12 +1,24 @@
 package com.savvisdirect.sdgui.rest;
 
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractMetaResourceImpl<E extends Enum<E>> {
 
     private E type;
+    
+    public AbstractMetaResourceImpl() { }
+    
+    public AbstractMetaResourceImpl(E type) {
+        this.type = type;
+    }
 
+    @RequestMapping(method = RequestMethod.GET)
+    @ResponseBody
     public List<String> listTypes() {
         Class<E> clazz = (Class<E>) getType().getClass();
         List<String> types = new ArrayList<String>();
@@ -19,6 +31,4 @@ public abstract class AbstractMetaResourceImpl<E extends Enum<E>> {
     public E getType() {
         return type;
     }
-
-    public abstract void setType(E type);
 }

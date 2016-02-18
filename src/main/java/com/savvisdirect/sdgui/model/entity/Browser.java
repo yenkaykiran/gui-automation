@@ -1,5 +1,10 @@
 package com.savvisdirect.sdgui.model.entity;
 
+import com.savvisdirect.sdgui.enums.BrowserType;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.io.Serializable;
 
 import javax.persistence.AttributeOverride;
@@ -11,12 +16,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import com.savvisdirect.sdgui.enums.BrowserType;
 
 @Entity
 @Table(name = "browsers", uniqueConstraints = @UniqueConstraint(columnNames = { "id" }))
@@ -55,14 +54,6 @@ public class Browser extends BaseEntity<Integer> implements Serializable {
 
 	public void setType(BrowserType type) {
 		this.type = type;
-	}
-
-	public Integer getTypeIndex() {
-		return getType().ordinal();
-	}
-
-	public void setTypeIndex(Integer type) {
-		this.setType(BrowserType.values()[type]);
 	}
 
 	public String getName() {
