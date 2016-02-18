@@ -1,0 +1,1 @@
+var sdGuiAutoApp = angular.module("sdGuiAutoApp", [ 'ngMaterial', 'ngRoute', 'route-segment', 'view-segment', 'ngCookies' ]);
