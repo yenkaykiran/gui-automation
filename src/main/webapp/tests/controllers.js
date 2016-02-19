@@ -82,9 +82,21 @@ sdGuiAutoApp.controller('TestStepsController', [ '$scope', '$rootScope', 'AjaxSe
     
     $rootScope.temp.testId = $routeSegment.$routeParams['id'];
     
-    $scope.restUrl = "steps/";
+    $scope.restUrl = "steps/byTest/" + $rootScope.temp.testId + '/';
     
     $scope.load = function() {
+    	$scope.reorderSteps = {
+			stop : function(e, ui) {
+				var orders = [];
+				for (var index in $scope.items) {
+					$scope.items[index].stepOrder = index;
+					orders[$scope.items[index].id] = index;
+				}
+				AjaxService.call($scope.restUrl + 'reorder', 'POST', orders).success(function(data, status, headers, config) {
+		            $scope.items = data;
+		        });
+			}
+		};
         AjaxService.call($scope.restUrl, 'GET').success(function(data, status, headers, config) {
             $scope.items = data;
         });
@@ -99,7 +111,8 @@ sdGuiAutoApp.controller('TestStepsController', [ '$scope', '$rootScope', 'AjaxSe
             data = {};
         }
         $rootScope.temp = {
-            item : data
+            item : data,
+            testId: $routeSegment.$routeParams['id']
         };
         $scope.openAsDialog('tests/addStep.html', ev, function() {
             $scope.load();
@@ -119,4 +132,34 @@ sdGuiAutoApp.controller('TestStepsController', [ '$scope', '$rootScope', 'AjaxSe
         });
     };
     
+} ]);
+
+sdGuiAutoApp.controller('AddEditTestStepController', [ '$scope', '$rootScope', 'AjaxService', '$controller', function($scope, $rootScope, AjaxService, $controller) {
+    'use strict';
+    
+    $controller('BaseController', {
+		$scope : $scope
+	});
+    
+    $scope.restUrl = "steps/byTest/" + $rootScope.temp.testId + '/';
+    
+    $scope.init = function() {
+        $scope.item = $rootScope.temp.item;
+        AjaxService.call('meta/identificationTypes', 'GET').success(function(data, status, headers, config) {
+            $scope.identificationTypes = data;
+        });
+        AjaxService.call('meta/waitTypes', 'GET').success(function(data, status, headers, config) {
+            $scope.waitTypes = data;
+        });
+        AjaxService.call('meta/actionTypes', 'GET').success(function(data, status, headers, config) {
+            $scope.actionTypes = data;
+        });
+    };
+    
+    $scope.save = function() {
+        AjaxService.call($scope.restUrl, 'POST', $scope.item).success(function(data, status, headers, config) {
+        	$scope.item = data;
+        });
+    };
+
 } ]);

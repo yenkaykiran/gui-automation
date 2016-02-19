@@ -16,15 +16,15 @@
     <bean id="dataSource"
         class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="url" value="${sd.dataSource.URL}" />
-<!--         <property name="username" value="${sd.dataSource.username}" /> -->
-<!--         <property name="password" value="${sd.dataSource.password}" /> -->
+        <property name="username" value="${sd.dataSource.username}" />
+        <property name="password" value="${sd.dataSource.password}" />
         <property name="driverClassName" value="${sd.dataSource.driver}" />
     </bean>
 
     <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
         <property name="showSql" value="true" />
         <property name="generateDdl" value="true" />
-        <property name="database" value="H2" />
+        <property name="database" value="${sd.dataSource.dbtype}" />
     </bean>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -34,7 +34,7 @@
         <!-- spring based scanning for entity classes -->
         <property name="packagesToScan">
             <list>
-                <value>com.savvisdirect.sdgui.model.entity</value>
+                <value>com.cba.sdgui.model.entity</value>
             </list>
         </property>
     </bean>
@@ -44,7 +44,7 @@
     </bean>
 
     <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
-    <jpa:repositories base-package="com.savvisdirect.sdgui.repository" entity-manager-factory-ref="entityManagerFactory" />
+    <jpa:repositories base-package="com.cba.sdgui.repository" entity-manager-factory-ref="entityManagerFactory" />
     
 <!--     <bean id="jDesktopPane" class="javax.swing.JDesktopPane" scope="singleton" /> -->
 <!--     <bean id="firefoxProfile" class="org.openqa.selenium.firefox.FirefoxProfile" /> -->

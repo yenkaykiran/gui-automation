@@ -1,0 +1,74 @@
+<md-dialog aria-label="Add Form" ng-controller="AddEditTestStepController" ng-cloak style="width: 100%" ng-init="init()" class="fullscreen-dialog">
+	<form ng-submit="save()">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Test Step</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+            <i class="material-icons">close</i>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content layout-padding>
+        <md-tabs md-dynamic-height md-border-bottom>
+            <md-tab label="Identification">
+                <div class="md-dialog-content" flex>
+			        <md-input-container class="md-block" flex-gt-xs>
+			            <label>Name</label>
+			            <input ng-model="item.name" type="text" />
+			        </md-input-container>
+			        <md-input-container class="md-block" flex-gt-xs>
+		                <label>Identity</label>
+		                <input ng-model="item.elementIdentity" type="text" />
+		            </md-input-container>
+		            <md-input-container class="md-block" flex-gt-xs>
+		                <label>Type</label>
+		                <md-select ng-model="item.identificationType">
+		                   <md-option ng-repeat="(index,type) in identificationTypes" value="{{index}}" ng-selected="index == item.identificationType ? true : index == 0">{{type}}</md-option>
+		                </md-select>
+		            </md-input-container>
+		            <md-switch class="md-primary" md-no-ink aria-label="Wait Step" ng-model="item.isWait">
+                        <label>Need to Wait ?</label>
+                    </md-switch>
+                    <md-switch class="md-primary" md-no-ink aria-label="Need an Action" ng-model="item.isAction">
+                        <label>Perform an Action</label>
+                    </md-switch>
+			    </div>
+            </md-tab>
+            <md-tab label="Wait Details" ng-disabled="!item.isWait">
+                <div class="md-dialog-content" flex>
+                    <md-input-container class="md-block" flex-gt-xs>
+                        <label>Wait Type</label>
+                        <md-select ng-model="item.waitType">
+                           <md-option ng-repeat="(index,type) in waitTypes" value="{{index}}" ng-selected="index == item.waitType ? true : index == 0">{{type}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-xs>
+                        <label>Time in seconds</label>
+                        <input ng-model="item.waitTime" type="number" />
+                    </md-input-container>
+                </div>
+            </md-tab>
+            <md-tab label="Action Details" ng-disabled="!item.isAction">
+                <div class="md-dialog-content" flex>
+                    <md-input-container class="md-block" flex-gt-xs>
+                        <label>Action Type</label>
+                        <md-select ng-model="item.actionType">
+                           <md-option ng-repeat="(index,type) in actionTypes" value="{{index}}" ng-selected="index == actionType ? true : index == 0">{{type}}</md-option>
+                        </md-select>
+                    </md-input-container>
+                    <md-input-container class="md-block" flex-gt-xs>
+                        <label>Keys to Send</label>
+                        <input ng-model="item.keys" type="text" />
+                    </md-input-container>
+                </div>
+            </md-tab>
+        </md-tabs>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <md-button ng-click="cancel()"> Cancel </md-button>
+        <md-button type="submit" style="margin-right:20px;"> Save </md-button>
+    </md-dialog-actions>
+    </form>
+</md-dialog>

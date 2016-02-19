@@ -13,7 +13,6 @@
 		<junit.version>4.11</junit.version>
 		<mockito.version>1.9.5</mockito.version>
 		<joda-time.version>2.2</joda-time.version>
-		<mysql.connector.version>5.1.36</mysql.connector.version>
 		<hibernate.jpa.version>1.0.0.Final</hibernate.jpa.version>
         <joda.version>2.9.1</joda.version>
         <mysql.connector.version>5.1.38</mysql.connector.version>
@@ -163,11 +162,16 @@
 			<artifactId>selenium-core</artifactId>
 			<version>1.0.1</version>
 		</dependency>
-		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>1.4.191</version>
-		</dependency>
+       <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.connector.version}</version>
+        </dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>com.h2database</groupId> -->
+<!-- 			<artifactId>h2</artifactId> -->
+<!-- 			<version>1.4.191</version> -->
+<!-- 		</dependency> -->
 <!-- 		<dependency> -->
 <!-- 			<groupId>commons-collections</groupId> -->
 <!-- 			<artifactId>commons-collections</artifactId> -->
@@ -216,7 +220,7 @@
 							</includes>
 						</resource>
 					</webResources>
-					<outputDirectory>/Users/kirannk/Development/apache-tomcat-8.0.23/webapps</outputDirectory>
+					<outputDirectory>C:\Kiran\Installed\apache-tomcat-6.0.41\webapps</outputDirectory>
 				</configuration>
 			</plugin>
 			<plugin>
