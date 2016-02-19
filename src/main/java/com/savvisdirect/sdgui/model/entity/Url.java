@@ -2,6 +2,7 @@ package com.savvisdirect.sdgui.model.entity;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
 
@@ -59,7 +60,7 @@ public class Url extends BaseEntity<Integer> implements Serializable {
 
     @Override
     public String toString() {
-        return this.getName();
+    	return ToStringBuilder.reflectionToString(this);
     }
 
     @Override

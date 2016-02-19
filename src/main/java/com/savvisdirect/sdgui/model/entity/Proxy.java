@@ -1,10 +1,5 @@
 package com.savvisdirect.sdgui.model.entity;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.openqa.selenium.Proxy.ProxyType;
-
 import java.io.Serializable;
 
 import javax.persistence.AttributeOverride;
@@ -16,6 +11,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import com.savvisdirect.sdgui.enums.ProxyType;
 
 @Entity
 @Table(name = "proxy", uniqueConstraints = @UniqueConstraint(columnNames = { "id" }))

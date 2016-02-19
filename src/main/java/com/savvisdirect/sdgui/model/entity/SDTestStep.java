@@ -6,6 +6,7 @@ import com.savvisdirect.sdgui.enums.WaitType;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
 
@@ -163,7 +164,7 @@ public class SDTestStep extends BaseEntity<Integer> implements Serializable {
 
     @Override
     public String toString() {
-        return this.getName();
+    	return ToStringBuilder.reflectionToString(this);
     }
 
     @Override

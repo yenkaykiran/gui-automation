@@ -2,13 +2,12 @@ package com.savvisdirect.sdgui.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum WaitType {
+public enum ProxyType {
 
-    NONE, UNTIL_CLICKABLE;
-    
-    @JsonValue
+	DIRECT, MANUAL, PAC, RESERVED_1, AUTODETECT, SYSTEM, UNSPECIFIED;
+
+	@JsonValue
 	public Integer value() {
 		return ordinal();
 	}
-
 }

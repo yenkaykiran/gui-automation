@@ -1,5 +1,7 @@
 package com.savvisdirect.sdgui.enums;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum BrowserType {
 
 	Chrome("webdriver.chrome.driver"), Firefox("f"), InternetExplorer("ie"), Safari("s");
@@ -16,5 +18,10 @@ public enum BrowserType {
 
 	public void setDriverProperty(String driverProperty) {
 		this.driverProperty = driverProperty;
+	}
+
+	@JsonValue
+	public Integer value() {
+		return ordinal();
 	}
 }
