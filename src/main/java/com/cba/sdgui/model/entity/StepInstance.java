@@ -1,5 +1,14 @@
 package com.cba.sdgui.model.entity;
 
+import com.cba.sdgui.enums.ActionType;
+import com.cba.sdgui.enums.IdentifyBy;
+import com.cba.sdgui.enums.StepResultType;
+import com.cba.sdgui.enums.WaitType;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.io.Serializable;
 
 import javax.persistence.AttributeOverride;
@@ -10,18 +19,10 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
-import com.cba.sdgui.enums.ActionType;
-import com.cba.sdgui.enums.IdentifyBy;
-import com.cba.sdgui.enums.StepResultType;
-import com.cba.sdgui.enums.WaitType;
 
 @Entity
 @Table(name = "sd_test_inst", uniqueConstraints = @UniqueConstraint(columnNames = { "id" }))
@@ -40,7 +41,10 @@ import com.cba.sdgui.enums.WaitType;
         @AttributeOverride(name = "stepId", column = @Column(name = "step_id")),
         @AttributeOverride(name = "timeConsumed", column = @Column(name = "time_consumed")),
         @AttributeOverride(name = "status", column = @Column(name = "status")),
-        @AttributeOverride(name = "exception", column = @Column(name = "exception"))
+        @AttributeOverride(name = "exception", column = @Column(name = "exception")),
+        @AttributeOverride(name = "needVerification", column = @Column(name = "need_verification")),
+        @AttributeOverride(name = "visibilityCheck", column = @Column(name = "visibility_check")),
+        @AttributeOverride(name = "enableCheck", column = @Column(name = "enable_check"))
 })
 public class StepInstance extends BaseEntity<Integer> implements Serializable, Comparable<StepInstance> {
 
@@ -59,9 +63,12 @@ public class StepInstance extends BaseEntity<Integer> implements Serializable, C
 	private SDTest test;
 	private Integer stepId;
 	private Long timeConsumed;
-	private StepResultType status;
+	private String status;
 	private String exception;
 	private TestRun run;
+	private Boolean needVerification;
+	private String visibilityCheck;
+    private String enableCheck;
 
 	@Override
 	@Id
@@ -194,10 +201,11 @@ public class StepInstance extends BaseEntity<Integer> implements Serializable, C
 		return timeConsumed;
 	}
 
-	public StepResultType getStatus() {
+	public String getStatus() {
 		return status;
 	}
 
+	@Lob
 	public String getException() {
 		return exception;
 	}
@@ -206,7 +214,7 @@ public class StepInstance extends BaseEntity<Integer> implements Serializable, C
 		this.timeConsumed = timeConsumed;
 	}
 
-	public void setStatus(StepResultType status) {
+	public void setStatus(String status) {
 		this.status = status;
 	}
 
@@ -214,6 +222,7 @@ public class StepInstance extends BaseEntity<Integer> implements Serializable, C
 		this.exception = exception;
 	}
 
+	@ManyToOne(fetch = FetchType.EAGER, optional = false)
 	public TestRun getRun() {
 		return run;
 	}
@@ -222,7 +231,31 @@ public class StepInstance extends BaseEntity<Integer> implements Serializable, C
 		this.run = run;
 	}
 
-	@Override
+	public Boolean getNeedVerification() {
+        return needVerification;
+    }
+
+    public void setNeedVerification(Boolean needVerification) {
+        this.needVerification = needVerification;
+    }
+
+    public String getVisibilityCheck() {
+        return visibilityCheck;
+    }
+
+    public void setVisibilityCheck(String visibilityCheck) {
+        this.visibilityCheck = visibilityCheck;
+    }
+
+    public String getEnableCheck() {
+        return enableCheck;
+    }
+
+    public void setEnableCheck(String enableCheck) {
+        this.enableCheck = enableCheck;
+    }
+
+    @Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}

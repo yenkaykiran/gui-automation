@@ -21,6 +21,10 @@ sdGuiAutoApp.controller('HomeController', [ '$scope', '$rootScope', '$timeout', 
 		url : "#/home/tests",
 		title : "Tests",
 		icon : ""
+	}, {
+		url : "#/home/pages",
+		title : "Pages",
+		icon : ""
 	} ];
     
     $controller('BaseController', {

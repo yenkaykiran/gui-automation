@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum WaitType {
 
-    NONE, UNTIL_CLICKABLE;
+    NONE, UNTIL_CLICKABLE, ELEMENT_AVAILABLE;
     
     @JsonValue
 	public Integer value() {

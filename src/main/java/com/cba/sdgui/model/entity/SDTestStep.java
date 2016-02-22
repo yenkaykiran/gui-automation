@@ -1,7 +1,6 @@
 package com.cba.sdgui.model.entity;
 
 import com.cba.sdgui.enums.ActionType;
-import com.cba.sdgui.enums.IdentifyBy;
 import com.cba.sdgui.enums.WaitType;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -19,6 +18,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -27,23 +27,22 @@ import javax.persistence.UniqueConstraint;
 @AttributeOverrides(value = {
         @AttributeOverride(name = "id", column = @Column(name = "id", insertable = false, updatable = false)),
         @AttributeOverride(name = "name", column = @Column(name = "name")),
-        @AttributeOverride(name = "elementIdentity", column = @Column(name = "element_identity")),
-        @AttributeOverride(name = "identificationType", column = @Column(name = "identification_type")),
         @AttributeOverride(name = "isWait", column = @Column(name = "is_wait")),
         @AttributeOverride(name = "waitTime", column = @Column(name = "wait_time")),
         @AttributeOverride(name = "isAction", column = @Column(name = "is_action")),
         @AttributeOverride(name = "actionType", column = @Column(name = "action_type")),
         @AttributeOverride(name = "keys", column = @Column(name = "keys_to_send")),
         @AttributeOverride(name = "waitType", column = @Column(name = "wait_type")),
-        @AttributeOverride(name = "stepOrder", column = @Column(name = "step_order"))
+        @AttributeOverride(name = "stepOrder", column = @Column(name = "step_order")),
+        @AttributeOverride(name = "needVerification", column = @Column(name = "need_verification")),
+        @AttributeOverride(name = "visibility", column = @Column(name = "visibility")),
+        @AttributeOverride(name = "enabledisable", column = @Column(name = "enabledisable"))
 })
 public class SDTestStep extends BaseEntity<Integer> implements Serializable, Comparable<SDTestStep> {
 
     private static final long serialVersionUID = 4289151143888117381L;
 
     private String name;
-    private String elementIdentity;
-    private IdentifyBy identificationType;
     private Boolean isWait;
     private Integer waitTime;
     private Boolean isAction;
@@ -52,6 +51,10 @@ public class SDTestStep extends BaseEntity<Integer> implements Serializable, Com
     private WaitType waitType;
     private Integer stepOrder = 1;
     private SDTest test;
+    private Boolean needVerification;
+    private Boolean visibility;
+    private Boolean enabledisable;
+    private Element element;
 
     @Override
     @Id
@@ -73,25 +76,6 @@ public class SDTestStep extends BaseEntity<Integer> implements Serializable, Com
         this.name = name;
     }
 
-    public String getElementIdentity() {
-        return elementIdentity;
-    }
-
-    public void setElementIdentity(String elementIdentity) {
-        this.elementIdentity = elementIdentity;
-    }
-
-    public IdentifyBy getIdentificationType() {
-        if (null == identificationType) {
-            identificationType = IdentifyBy.XPath;
-        }
-        return identificationType;
-    }
-
-    public void setIdentificationType(IdentifyBy identificationType) {
-        this.identificationType = identificationType;
-    }
-
     public Boolean getIsWait() {
         if (null == isWait) {
             isWait = false;
@@ -104,7 +88,7 @@ public class SDTestStep extends BaseEntity<Integer> implements Serializable, Com
     }
 
     public Integer getWaitTime() {
-        if(null == waitTime || waitTime <= 0) {
+        if (null == waitTime || waitTime <= 0) {
             waitTime = 1;
         }
         return waitTime;
@@ -163,6 +147,30 @@ public class SDTestStep extends BaseEntity<Integer> implements Serializable, Com
         this.stepOrder = stepOrder;
     }
 
+    public Boolean getNeedVerification() {
+        return needVerification;
+    }
+
+    public void setNeedVerification(Boolean needVerification) {
+        this.needVerification = needVerification;
+    }
+
+    public Boolean getVisibility() {
+        return visibility;
+    }
+
+    public void setVisibility(Boolean visibility) {
+        this.visibility = visibility;
+    }
+
+    public Boolean getEnabledisable() {
+        return enabledisable;
+    }
+
+    public void setEnabledisable(Boolean enabledisable) {
+        this.enabledisable = enabledisable;
+    }
+
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     public SDTest getTest() {
         return test;
@@ -172,9 +180,18 @@ public class SDTestStep extends BaseEntity<Integer> implements Serializable, Com
         this.test = test;
     }
 
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
+    public Element getElement() {
+        return element;
+    }
+
+    public void setElement(Element element) {
+        this.element = element;
+    }
+
     @Override
     public String toString() {
-    	return ToStringBuilder.reflectionToString(this);
+        return ToStringBuilder.reflectionToString(this);
     }
 
     @Override

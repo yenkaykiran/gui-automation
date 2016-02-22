@@ -1,9 +1,11 @@
 package com.cba.sdgui.rest;
 
-import java.util.Collections;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
+import com.cba.sdgui.model.entity.StepInstance;
+import com.cba.sdgui.model.entity.TestRun;
+import com.cba.sdgui.repository.SDStepInstanceRepository;
+import com.cba.sdgui.service.SDTestService;
+import com.cba.sdgui.service.StepInstanceService;
+import com.cba.sdgui.service.TestRunService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -17,13 +19,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cba.sdgui.model.entity.SDTest;
-import com.cba.sdgui.model.entity.StepInstance;
-import com.cba.sdgui.model.entity.TestRun;
-import com.cba.sdgui.repository.SDStepInstanceRepository;
-import com.cba.sdgui.service.SDTestService;
-import com.cba.sdgui.service.StepInstanceService;
-import com.cba.sdgui.service.TestRunService;
+import java.util.Collections;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping(value = "/stepInstances", produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -47,27 +46,27 @@ public class StepInstanceResourceImpl extends AbstractResourceImpl<Integer, Step
 	@ResponseBody
 	public ResponseEntity<StepInstance> addStepInstance(@RequestBody StepInstance entity, @PathVariable("id") Integer id, HttpServletRequest httpRequest) {
 		HttpHeaders headers = new HttpHeaders();
-		HttpStatus responseStatus = null;
-		try {
-			if (null != id) {
-				SDTest test = sdTestService.findById(id);
-				if (null != test) {
-					entity.setTest(test);
-					if (null == entity.getId()) {
-						entity.setStepOrder(test.getSteps().size() + entity.getStepOrder());
-					}
-					entity = getService().save(entity);
-					entity.setTest(null);
-					responseStatus = HttpStatus.OK;
-				} else {
-					responseStatus = HttpStatus.BAD_REQUEST;
-				}
-			} else {
-				responseStatus = HttpStatus.BAD_REQUEST;
-			}
-		} catch (Exception e) {
-			responseStatus = HttpStatus.BAD_REQUEST;
-		}
+		HttpStatus responseStatus = HttpStatus.BAD_REQUEST;
+//		try {
+//			if (null != id) {
+//				SDTest test = sdTestService.findById(id);
+//				if (null != test) {
+//					entity.setTest(test);
+//					if (null == entity.getId()) {
+//						entity.setStepOrder(test.getSteps().size() + entity.getStepOrder());
+//					}
+//					entity = getService().save(entity);
+//					entity.setTest(null);
+//					responseStatus = HttpStatus.OK;
+//				} else {
+//					responseStatus = HttpStatus.BAD_REQUEST;
+//				}
+//			} else {
+//				responseStatus = HttpStatus.BAD_REQUEST;
+//			}
+//		} catch (Exception e) {
+//			responseStatus = HttpStatus.BAD_REQUEST;
+//		}
 		return new ResponseEntity<StepInstance>(entity, headers, responseStatus);
 	}
 
@@ -94,6 +93,7 @@ public class StepInstanceResourceImpl extends AbstractResourceImpl<Integer, Step
 				Collections.sort(stepInts);
 				for (StepInstance sdTestStep : stepInts) {
 					sdTestStep.setTest(null);
+					sdTestStep.setRun(null);
 				}
 			}
 		}

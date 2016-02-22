@@ -23,6 +23,12 @@
                    <md-option ng-repeat="(index,browser) in browsers" value="{{browser.id}}" ng-selected="browser.id == item.browser ? true : index == 0">{{browser.name}}</md-option>
                 </md-select>
             </md-input-container>
+            <md-switch class="md-primary" md-no-ink aria-label="Headless Browser" ng-model="item.headless">
+                <label>Headless Browser ?</label>
+            </md-switch>
+            <md-switch class="md-primary" md-no-ink aria-label="Maximize Window" ng-model="item.maximizeWindow">
+                <label>Maximize Window ?</label>
+            </md-switch>
             <md-switch class="md-primary" md-no-ink aria-label="With Proxy" ng-model="item.withProxy">
                 <label>With Proxy ?</label>
             </md-switch>

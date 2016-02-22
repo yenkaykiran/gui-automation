@@ -1,0 +1,36 @@
+<md-dialog aria-label="Add Form" ng-controller="AddEditElementController" ng-cloak style="width: 100%" ng-init="init()" class="fullscreen-dialog">
+	<form ng-submit="save()">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Element</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+            <i class="material-icons">close</i>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content layout-padding>
+        <div class="md-dialog-content" flex>
+	        <md-input-container class="md-block" flex-gt-xs>
+	            <label>Name</label>
+	            <input ng-model="item.name" type="text" />
+	        </md-input-container>
+	        <md-input-container class="md-block" flex-gt-xs>
+                <label>Page</label>
+                <md-select ng-model="item.page">
+                   <md-option ng-repeat="(index,type) in identificationTypes" value="{{index}}" ng-selected="index == item.identificationType ? true : index == 0">{{type}}</md-option>
+                </md-select>
+            </md-input-container>
+	        <md-input-container class="md-block" flex-gt-xs>
+                <label>Identity</label>
+                <input ng-model="item.identity" type="text" />
+            </md-input-container>
+	    </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <md-button ng-click="cancel()"> Cancel </md-button>
+        <md-button type="submit" style="margin-right:20px;"> Save </md-button>
+    </md-dialog-actions>
+    </form>
+</md-dialog>

@@ -15,6 +15,8 @@ public class TestRunModel implements Serializable {
 	private Integer url;
 	private Integer browser;
 	private Integer proxy;
+	private Boolean headless = false;
+	private Boolean maximizeWindow = false;
 
 	public Integer getId() {
 		return this.id;
@@ -56,7 +58,23 @@ public class TestRunModel implements Serializable {
 		this.proxy = proxy;
 	}
 
-	@Override
+	public Boolean getHeadless() {
+        return headless;
+    }
+
+    public void setHeadless(Boolean headless) {
+        this.headless = headless;
+    }
+
+    public Boolean getMaximizeWindow() {
+        return maximizeWindow;
+    }
+
+    public void setMaximizeWindow(Boolean maximizeWindow) {
+        this.maximizeWindow = maximizeWindow;
+    }
+
+    @Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);
 	}

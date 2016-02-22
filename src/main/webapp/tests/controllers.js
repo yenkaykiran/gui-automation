@@ -214,21 +214,16 @@ sdGuiAutoApp.controller('TestsRunController', [ '$scope', '$rootScope', 'AjaxSer
         });
     };
     
-    $scope.stopTest = function(item, $event) {
-        $scope.confirmDialog({
-            title: 'Are you sure to delete this ?',
-            content: 'Test Name: ' + item.name,
-            okLabel: 'Delete',
-            cancelLabel: 'Cancel'
-        }, $event, function() {
-            AjaxService.call($scope.restUrl + item.id, 'DELETE').success(function(data, status, headers, config) {
-                $scope.load();
-            });
-        });
-    };
-    
     $scope.viewStatus = function(item, $event) {
-        $location.path("/home/tests/" + item.id + "/steps");
+    	if(!item) {
+    		item = {};
+	    }
+	    $rootScope.temp = {
+            item : item
+        };
+    	$scope.openAsDialog('tests/runResult.html', $event, function() {
+            $scope.load();
+        });
     };
 } ]);
 
@@ -258,6 +253,23 @@ sdGuiAutoApp.controller('AddTestRunController', [ '$scope', '$rootScope', 'AjaxS
         AjaxService.call($scope.restUrl, 'POST', $scope.item).success(function(data, status, headers, config) {
             $scope.item = data;
             $scope.cancel();
+        });
+    };
+
+} ]);
+
+sdGuiAutoApp.controller('TestRunResultController', [ '$scope', '$rootScope', 'AjaxService', '$controller', function($scope, $rootScope, AjaxService, $controller) {
+    'use strict';
+    
+    $controller('BaseController', {
+        $scope : $scope
+    });
+    
+    $scope.restUrl = "stepInstances/run/" + $rootScope.temp.item.id + '/';
+    
+    $scope.init = function() {
+        AjaxService.call($scope.restUrl, 'GET').success(function(data, status, headers, config) {
+            $scope.items = data;
         });
     };
 

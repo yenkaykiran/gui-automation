@@ -33,6 +33,9 @@
                     <md-switch class="md-primary" md-no-ink aria-label="Need an Action" ng-model="item.isAction">
                         <label>Perform an Action</label>
                     </md-switch>
+                    <md-switch class="md-primary" md-no-ink aria-label="Needs Verification" ng-model="item.needVerification">
+                        <label>Needs Verification</label>
+                    </md-switch>
 			    </div>
             </md-tab>
             <md-tab label="Wait Details" ng-disabled="!item.isWait">
@@ -54,13 +57,21 @@
                     <md-input-container class="md-block" flex-gt-xs>
                         <label>Action Type</label>
                         <md-select ng-model="item.actionType">
-                           <md-option ng-repeat="(index,type) in actionTypes" value="{{index}}" ng-selected="index == actionType ? true : index == 0">{{type}}</md-option>
+                           <md-option ng-repeat="(index,type) in actionTypes" value="{{index}}" ng-selected="index == item.actionType ? true : index == 0">{{type}}</md-option>
                         </md-select>
                     </md-input-container>
                     <md-input-container class="md-block" flex-gt-xs>
                         <label>Keys to Send</label>
                         <input ng-model="item.keys" type="text" />
                     </md-input-container>
+                </div>
+            </md-tab>
+            <md-tab label="Verification" ng-disabled="!item.needVerification">
+                <div class="md-dialog-content" flex>
+                    <div flex-xs flex="50">
+                        <md-checkbox md-no-ink aria-label="Visibility" ng-model="item.visibility" class="md-primary">Visibility</md-checkbox>
+                        <md-checkbox md-no-ink aria-label="Enabled Check" ng-model="item.enabledisable" class="md-primary">Check if Element is Enabled</md-checkbox>
+                    </div>
                 </div>
             </md-tab>
         </md-tabs>
