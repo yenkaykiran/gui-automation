@@ -5,7 +5,7 @@
                 <i class="material-icons">add</i>
             </md-button>
             <md-button class="md-fab md-primary md-hue-2" aria-label="Refresh" ng-click="load()">
-                <i class="material-icons">search</i>
+                <i class="material-icons">refresh</i>
             </md-button>
         </div>
     </div>
@@ -28,6 +28,10 @@
                             <md-button aria-label="Test Steps" class="md-fab md-mini" ng-click="launchSteps(item)">
                                 <md-tooltip>Test Steps</md-tooltip>
                                 <i class="material-icons">mode_edit</i>
+                            </md-button>
+                            <md-button aria-label="Run Test" class="md-fab md-mini" ng-click="runTest(item)">
+                                <md-tooltip>Run Test</md-tooltip>
+                                <i class="material-icons">slideshow</i>
                             </md-button>
                         </md-fab-actions>
                     </md-fab-speed-dial>

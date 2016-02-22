@@ -48,6 +48,10 @@ sdGuiAutoApp.controller('TestsController', [ '$scope', '$rootScope', 'AjaxServic
         $location.path("/home/tests/" + item.id + "/steps");
     };
     
+    $scope.runTest = function(item, ev) {
+        $location.path("/home/tests/" + item.id + "/runner");
+    };
+    
 } ]);
 
 sdGuiAutoApp.controller('AddEditTestController', [ '$scope', '$rootScope', 'AjaxService', '$controller', function($scope, $rootScope, AjaxService, $controller) {
@@ -90,10 +94,12 @@ sdGuiAutoApp.controller('TestStepsController', [ '$scope', '$rootScope', 'AjaxSe
 				var orders = [];
 				for (var index in $scope.items) {
 					$scope.items[index].stepOrder = index;
-					orders[$scope.items[index].id] = index;
+					var obj = {};
+					obj[$scope.items[index].id] = index;
+					orders.push(obj);
 				}
 				AjaxService.call($scope.restUrl + 'reorder', 'POST', orders).success(function(data, status, headers, config) {
-		            $scope.items = data;
+				    $scope.load();
 		        });
 			}
 		};
@@ -132,6 +138,12 @@ sdGuiAutoApp.controller('TestStepsController', [ '$scope', '$rootScope', 'AjaxSe
         });
     };
     
+    $scope.enableDisable = function(item) {
+        AjaxService.call($scope.restUrl, 'POST', item).success(function(data, status, headers, config) {
+            $scope.item = data;
+        });
+    };
+    
 } ]);
 
 sdGuiAutoApp.controller('AddEditTestStepController', [ '$scope', '$rootScope', 'AjaxService', '$controller', function($scope, $rootScope, AjaxService, $controller) {
@@ -159,6 +171,93 @@ sdGuiAutoApp.controller('AddEditTestStepController', [ '$scope', '$rootScope', '
     $scope.save = function() {
         AjaxService.call($scope.restUrl, 'POST', $scope.item).success(function(data, status, headers, config) {
         	$scope.item = data;
+        });
+    };
+    
+} ]);
+
+/* ******************************************************************************* */
+
+sdGuiAutoApp.controller('TestsRunController', [ '$scope', '$rootScope', 'AjaxService', '$location', '$controller', '$routeSegment', function($scope, $rootScope, AjaxService, $location, $controller, $routeSegment) {
+    'use strict';
+    
+    $controller('BaseController', {
+        $scope : $scope
+    });
+    
+    $rootScope.pageTitle = "Tests Runner";
+    
+    $rootScope.temp.testId = $routeSegment.$routeParams['id'];
+    
+    $scope.restUrl = "tests/" + $rootScope.temp.testId + '/runner/';
+    
+    $scope.load = function() {
+        AjaxService.call($scope.restUrl, 'GET').success(function(data, status, headers, config) {
+            $scope.items = data;
+        });
+    };
+    
+    $scope.init = function() {
+        AjaxService.call('browsers', 'GET').success(function(data, status, headers, config) {
+            $scope.browsers = data;
+        });
+        $scope.load();
+    };
+    
+    $scope.getBrowserName = function(item) {
+        return getObjectFromId($scope.browsers, item.browser);
+    };
+    
+    $scope.start = function(ev) {
+        $scope.openAsDialog('tests/newRun.html', ev, function() {
+            $scope.load();
+        });
+    };
+    
+    $scope.stopTest = function(item, $event) {
+        $scope.confirmDialog({
+            title: 'Are you sure to delete this ?',
+            content: 'Test Name: ' + item.name,
+            okLabel: 'Delete',
+            cancelLabel: 'Cancel'
+        }, $event, function() {
+            AjaxService.call($scope.restUrl + item.id, 'DELETE').success(function(data, status, headers, config) {
+                $scope.load();
+            });
+        });
+    };
+    
+    $scope.viewStatus = function(item, $event) {
+        $location.path("/home/tests/" + item.id + "/steps");
+    };
+} ]);
+
+sdGuiAutoApp.controller('AddTestRunController', [ '$scope', '$rootScope', 'AjaxService', '$controller', function($scope, $rootScope, AjaxService, $controller) {
+    'use strict';
+    
+    $controller('BaseController', {
+        $scope : $scope
+    });
+    
+    $scope.restUrl = "tests/" + $rootScope.temp.testId + '/runner/';
+    
+    $scope.init = function() {
+        $scope.item = $rootScope.temp.item;
+        AjaxService.call('urls', 'GET').success(function(data, status, headers, config) {
+            $scope.urls = data;
+        });
+        AjaxService.call('browsers', 'GET').success(function(data, status, headers, config) {
+            $scope.browsers = data;
+        });
+        AjaxService.call('proxies', 'GET').success(function(data, status, headers, config) {
+            $scope.proxies = data;
+        });
+    };
+    
+    $scope.save = function() {
+        AjaxService.call($scope.restUrl, 'POST', $scope.item).success(function(data, status, headers, config) {
+            $scope.item = data;
+            $scope.cancel();
         });
     };
 

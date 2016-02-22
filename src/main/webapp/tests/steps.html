@@ -5,7 +5,7 @@
                 <i class="material-icons">add</i>
             </md-button>
             <md-button class="md-fab md-primary md-hue-2" aria-label="Refresh" ng-click="load()">
-                <i class="material-icons">search</i>
+                <i class="material-icons">refresh</i>
             </md-button>
         </div>
     </div>
@@ -25,6 +25,9 @@
                                 <md-tooltip>Edit</md-tooltip>
                                 <i class="material-icons">mode_edit</i>
                             </md-button>
+                            <md-switch class="md-primary" md-no-ink aria-label="Enable/ Disable Step" ng-model="item.enabled" ng-change="enableDisable(item)">
+		                        <label>Enable or Disable Step</label>
+		                    </md-switch>
                         </md-fab-actions>
                     </md-fab-speed-dial>
                 </div>
