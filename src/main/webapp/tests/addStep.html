@@ -18,13 +18,15 @@
 			            <input ng-model="item.name" type="text" />
 			        </md-input-container>
 			        <md-input-container class="md-block" flex-gt-xs>
-		                <label>Identity</label>
-		                <input ng-model="item.elementIdentity" type="text" />
-		            </md-input-container>
+                        <label>Page</label>
+                        <md-select ng-model="item.page" ng-change="populateElements(item.page)" ng-init="populateElements(item.page)">
+                           <md-option ng-repeat="page in pages" ng-value="page.id" ng-selected="page.id == item.page ? true : pages.length == 0">{{page.name}}</md-option>
+                        </md-select>
+                    </md-input-container>
 		            <md-input-container class="md-block" flex-gt-xs>
-		                <label>Type</label>
-		                <md-select ng-model="item.identificationType">
-		                   <md-option ng-repeat="(index,type) in identificationTypes" value="{{index}}" ng-selected="index == item.identificationType ? true : index == 0">{{type}}</md-option>
+		                <label>Element</label>
+		                <md-select ng-model="item.element">
+		                   <md-option ng-repeat="element in elements" ng-value="element.id" ng-selected="element.id == item.element ? true : elements.length == 0">{{element.name}}</md-option>
 		                </md-select>
 		            </md-input-container>
 		            <md-switch class="md-primary" md-no-ink aria-label="Wait Step" ng-model="item.isWait">

@@ -19,18 +19,6 @@
 			        </md-input-container>
 	           </div>
             </md-tab>
-            <md-tab label="Elements">
-                <div layout="row" layout-align="space-between center" flex>
-                    <md-select ng-model="selectedElement">
-                        <md-option ng-repeat="element in elements" value="{{element.id}}" ng-hide="isAssigned(page, element)">{{element.name}}</md-option>
-                    </md-select>
-                    <md-button ng-click="addElementToPage(page, selectedElement)" class="md-primary md-raised md-hue-2" ng-disabled="elements.length == 0 || selectedElement == ''">Add Element</md-button>
-                </div>
-                <md-list-item ng-repeat="allotElem in room.elements">
-                    <p>{{getElement(allotElem.id).name}}</p>
-                    <md-icon md-svg-icon="icons/remove.svg" ng-click="removeElementFromPage(room, allotElem.id)" aria-label="Remove Element from Page" class="md-secondary md-hue-3"></md-icon>
-                </md-list-item>
-            </md-tab>
         </md-tabs>
     </md-dialog-content>
     <md-dialog-actions layout="row">

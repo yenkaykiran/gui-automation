@@ -11,6 +11,7 @@ sdGuiAutoApp.config(function($routeSegmentProvider, $routeProvider) {
     	when('/home/tests/:id/steps', 'home.testSteps').
     	when('/home/tests/:id/runner', 'home.runner').
     	when('/home/pages', 'home.pages').
+    	when('/home/pages/:id/elements', 'home.elements').
     	segment('home', {
 	        templateUrl : 'home/tmpl.html',
 	    });
@@ -42,6 +43,9 @@ sdGuiAutoApp.config(function($routeSegmentProvider, $routeProvider) {
             }).
             segment('pages', {
                 templateUrl : 'pages/tmpl.html'
+            }).
+            segment('elements', {
+                templateUrl : 'elements/tmpl.html'
             });
     
     $routeProvider.otherwise({redirectTo: '/home'}); 

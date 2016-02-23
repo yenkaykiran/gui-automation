@@ -1,4 +1,4 @@
-sdGuiAutoApp.controller('ElementsController', [ '$scope', '$rootScope', 'AjaxService', '$location', '$controller', function($scope, $rootScope, AjaxService, $location, $controller) {
+sdGuiAutoApp.controller('ElementsController', [ '$scope', '$rootScope', 'AjaxService', '$location', '$controller', '$routeSegment', function($scope, $rootScope, AjaxService, $location, $controller, $routeSegment) {
     'use strict';
     
     $controller('BaseController', {
@@ -6,8 +6,10 @@ sdGuiAutoApp.controller('ElementsController', [ '$scope', '$rootScope', 'AjaxSer
 	});
     
     $rootScope.pageTitle = "Elements";
+
+    $rootScope.temp.pageId = $routeSegment.$routeParams['id'];
     
-    $scope.restUrl = "elements/";
+    $scope.restUrl = "elements/byPage/" + $rootScope.temp.pageId + '/';
     
     $scope.load = function() {
     	AjaxService.call($scope.restUrl, 'GET').success(function(data, status, headers, config) {
@@ -20,11 +22,12 @@ sdGuiAutoApp.controller('ElementsController', [ '$scope', '$rootScope', 'AjaxSer
     };
     
     $scope.add = function(data, ev) {
-	    if(!data) {
-	    	data = {};
-	    }
-	    $rootScope.temp = {
-            item : data
+    	if(!data) {
+            data = {};
+        }
+        $rootScope.temp = {
+            item : data,
+            pageId: $routeSegment.$routeParams['id']
         };
 	    $scope.openAsDialog('elements/add.html', ev, function() {
 	        $scope.load();
@@ -53,10 +56,13 @@ sdGuiAutoApp.controller('AddEditElementController', [ '$scope', '$rootScope', 'A
 		$scope : $scope
 	});
     
-    $scope.restUrl = "elements/";
+    $scope.restUrl = "elements/byPage/" + $rootScope.temp.pageId + '/';
     
     $scope.init = function() {
         $scope.item = $rootScope.temp.item;
+        AjaxService.call('meta/identificationTypes', 'GET').success(function(data, status, headers, config) {
+            $scope.identificationTypes = data;
+        });
     };
     
     $scope.save = function() {

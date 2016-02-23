@@ -157,8 +157,8 @@ sdGuiAutoApp.controller('AddEditTestStepController', [ '$scope', '$rootScope', '
     
     $scope.init = function() {
         $scope.item = $rootScope.temp.item;
-        AjaxService.call('meta/identificationTypes', 'GET').success(function(data, status, headers, config) {
-            $scope.identificationTypes = data;
+        AjaxService.call('pages', 'GET').success(function(data, status, headers, config) {
+            $scope.pages = data;
         });
         AjaxService.call('meta/waitTypes', 'GET').success(function(data, status, headers, config) {
             $scope.waitTypes = data;
@@ -172,6 +172,14 @@ sdGuiAutoApp.controller('AddEditTestStepController', [ '$scope', '$rootScope', '
         AjaxService.call($scope.restUrl, 'POST', $scope.item).success(function(data, status, headers, config) {
         	$scope.item = data;
         });
+    };
+
+    $scope.populateElements = function(page) {
+    	if(page) {
+	    	AjaxService.call('elements/byPage/' + page, 'GET').success(function(data, status, headers, config) {
+	            $scope.elements = data;
+	        });
+    	}
     };
     
 } ]);
