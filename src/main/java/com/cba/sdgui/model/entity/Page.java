@@ -53,7 +53,7 @@ public class Page extends BaseEntity<Integer> implements Serializable {
         this.name = name;
     }
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "pages")
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "page")
     public List<Element> getElements() {
         return elements;
     }

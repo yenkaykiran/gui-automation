@@ -1,0 +1,37 @@
+<md-content style="height: 100%" ng-controller="TestRunResultController" ng-init="init()" flex class="fullscreen-dialog">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Test Execution Result</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+            <i class="material-icons">close</i>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content layout-padding>
+        <md-list>
+            <md-list-item ng-repeat="item in items" flex>
+                <p style="text-align: left">{{item.name}} (Step Status: {{item.status}})</p>
+                <div class="lock-size" layout="row" layout-align="center center" ng-hide="!item.needVerification">
+                    <md-fab-speed-dial md-open="true" md-direction="left">
+                        <md-fab-trigger></md-fab-trigger>
+                        <md-fab-actions>
+                            <md-button aria-label="Visible" class="md-fab md-mini" ng-disabled="!item.visibilityCheck">
+                                <md-tooltip>Visible</md-tooltip>
+                                <i class="material-icons">visibility</i>
+                            </md-button>
+                            <md-button aria-label="Enabled" class="md-fab md-mini" ng-disabled="!item.enableCheck">
+                                <md-tooltip>Enabled</md-tooltip>
+                                <i class="material-icons">sync</i>
+                            </md-button>
+                        </md-fab-actions>
+                    </md-fab-speed-dial>
+                </div>
+            </md-list-item>
+        </md-list>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <md-button ng-click="cancel()"> Close </md-button>
+    </md-dialog-actions>
+</md-content>

@@ -1,0 +1,49 @@
+<md-dialog aria-label="Add Form" ng-controller="AddTestRunController" ng-cloak style="width: 100%" ng-init="init()" class="fullscreen-dialog">
+	<form ng-submit="save()">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Run a Test</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+            <i class="material-icons">close</i>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content layout-padding>
+        <div class="md-dialog-content" flex>
+            <md-input-container class="md-block" flex-gt-xs>
+                <label>URL</label>
+                <md-select ng-model="item.url">
+                   <md-option ng-repeat="(index,url) in urls" value="{{url.id}}" ng-selected="url.id == item.url ? true : index == 0">{{url.name}}</md-option>
+                </md-select>
+            </md-input-container>
+	        <md-input-container class="md-block" flex-gt-xs>
+                <label>Browser</label>
+                <md-select ng-model="item.browser">
+                   <md-option ng-repeat="(index,browser) in browsers" value="{{browser.id}}" ng-selected="browser.id == item.browser ? true : index == 0">{{browser.name}}</md-option>
+                </md-select>
+            </md-input-container>
+            <md-switch class="md-primary" md-no-ink aria-label="Headless Browser" ng-model="item.headless">
+                <label>Headless Browser ?</label>
+            </md-switch>
+            <md-switch class="md-primary" md-no-ink aria-label="Maximize Window" ng-model="item.maximizeWindow">
+                <label>Maximize Window ?</label>
+            </md-switch>
+            <md-switch class="md-primary" md-no-ink aria-label="With Proxy" ng-model="item.withProxy">
+                <label>With Proxy ?</label>
+            </md-switch>
+            <md-input-container class="md-block" flex-gt-xs ng-hide="!item.withProxy">
+                <label>Proxy</label>
+                <md-select ng-model="item.proxy">
+                   <md-option ng-repeat="(index,proxy) in proxies" value="{{proxy.id}}" ng-selected="proxy.id == item.proxy ? true : index == 0">{{proxy.name}}</md-option>
+                </md-select>
+            </md-input-container>
+	    </div>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <md-button ng-click="cancel()"> Cancel </md-button>
+        <md-button type="submit" style="margin-right:20px;"> Start Test </md-button>
+    </md-dialog-actions>
+    </form>
+</md-dialog>

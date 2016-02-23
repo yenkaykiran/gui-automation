@@ -1,0 +1,45 @@
+<md-dialog aria-label="Add Form" ng-controller="AddEditPageController" ng-cloak style="width: 100%" ng-init="init()" class="fullscreen-dialog">
+	<form ng-submit="save()">
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Page</h2>
+        <span flex></span>
+        <md-button class="md-icon-button" ng-click="cancel()">
+            <i class="material-icons">close</i>
+        </md-button>
+      </div>
+    </md-toolbar>
+    <md-dialog-content layout-padding>
+        <md-tabs md-dynamic-height md-border-bottom>
+            <md-tab label="Details">
+                <div class="md-dialog-content" flex>
+			        <md-input-container class="md-block" flex-gt-xs>
+			            <label>Name</label>
+			            <input ng-model="item.name" type="text" />
+			        </md-input-container>
+	           </div>
+            </md-tab>
+            <md-tab label="Elements">
+                <div layout="row" layout-align="space-between center" flex>
+                    <md-select ng-model="selectedElement">
+                        <md-option ng-repeat="element in elements" value="{{element.id}}" ng-hide="isAssigned(item, element)">{{element.name}}</md-option>
+                    </md-select>
+                    <md-button ng-click="addElementToPage(item, selectedElement)" class="md-primary md-raised md-hue-2" ng-disabled="elements.length == 0 || selectedElement == ''">Add Element</md-button>
+                </div>
+                <md-list-item ng-repeat="allotElem in item.elements">
+                    <p>{{getElement(allotElem.id).name}}</p>
+                    <md-button ng-click="removeElementFromPage(item, allotElem.id)" aria-label="Remove Element from Page" class="md-secondary md-hue-3">
+                        <md-tooltip>Remove Element from Page</md-tooltip>
+                        <i class="material-icons">remove_circle_outline</i>
+                    </md-button>
+                </md-list-item>
+            </md-tab>
+        </md-tabs>
+    </md-dialog-content>
+    <md-dialog-actions layout="row">
+        <span flex></span>
+        <md-button ng-click="cancel()"> Cancel </md-button>
+        <md-button type="submit" style="margin-right:20px;"> Save </md-button>
+    </md-dialog-actions>
+    </form>
+</md-dialog>

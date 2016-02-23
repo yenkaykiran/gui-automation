@@ -1,0 +1,30 @@
+<md-content style="height: 100%" ng-controller="TestsRunController" ng-init="init()" flex>
+    <div layout="row" layout-align="space-between center">
+        <div>
+            <md-button class="md-fab md-primary md-hue-2" aria-label="Start Test" ng-click="start($event)">
+                <i class="material-icons">play_arrow</i>
+            </md-button>
+            <md-button class="md-fab md-primary md-hue-2" aria-label="Refresh" ng-click="load()">
+                <i class="material-icons">refresh</i>
+            </md-button>
+        </div>
+    </div>
+    <div style="padding: 5px; text-align: center">
+        <md-list>
+            <md-list-item ng-repeat="item in items" ng-click="nothing()" flex>
+                <p>{{getBrowserName(item).name}}</p>
+                <div class="lock-size" layout="row" layout-align="center center">
+                    <md-fab-speed-dial md-open="true" md-direction="left">
+                        <md-fab-trigger></md-fab-trigger>
+                        <md-fab-actions>
+                            <md-button aria-label="View Status" class="md-fab md-mini" ng-click="viewStatus(item, $event)">
+                                <md-tooltip>View Status</md-tooltip>
+                                <i class="material-icons">pageview</i>
+                            </md-button>
+                        </md-fab-actions>
+                    </md-fab-speed-dial>
+                </div>
+            </md-list-item>
+        </md-list>
+    </div>
+</md-content>

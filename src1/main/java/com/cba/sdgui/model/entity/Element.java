@@ -7,16 +7,19 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
@@ -35,7 +38,7 @@ public class Element extends BaseEntity<Integer> implements Serializable {
     private String name;
     private String identity;
     private IdentifyBy identificationType;
-    private Page page;
+    private Set<PageElement> pageElements = new HashSet<PageElement>();
 
     @Override
     @Id
@@ -76,18 +79,18 @@ public class Element extends BaseEntity<Integer> implements Serializable {
         this.identificationType = identificationType;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    public Page getPage() {
-        return page;
+    @OneToMany(mappedBy = "id.element", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    public Set<PageElement> getPageElements() {
+        return pageElements;
     }
 
-    public void setPage(Page page) {
-        this.page = page;
+    public void setPageElements(Set<PageElement> pageElements) {
+        this.pageElements = pageElements;
     }
 
     @Override
     public String toString() {
-    	return ToStringBuilder.reflectionToString(this);
+        return ToStringBuilder.reflectionToString(this);
     }
 
     @Override
