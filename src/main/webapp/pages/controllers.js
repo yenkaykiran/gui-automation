@@ -64,5 +64,55 @@ sdGuiAutoApp.controller('AddEditPageController', [ '$scope', '$rootScope', 'Ajax
         	$scope.item = data;
         });
     };
+    
+    $scope.getElement = function(allottedElement) {
+        for(var i in $scope.elements) {
+            if($scope.elements[i].id == allottedElement) {
+                return $scope.elements[i];
+            }
+        }
+    };
+    
+    $scope.isAssigned = function(page, elem) {
+        for(var allotedElem in page.elements) {
+            if(elem.id == page.elements[allotedElem].id) {
+                return true;
+            }
+        }
+        return false;
+    };
+    
+    $scope.addElementToPage = function(page, elemId) {
+        if(!$scope.isAssigned(page, $scope.getElement(elemId))) {
+            if(!page.elements) {
+                page.elements = [];
+            }
+            try {
+                elemId = parseInt(elemId);
+            } catch (e) { }
+            page.elements.push({id: elemId, value: 1});
+            elemId = null;
+        }
+    };
+    
+    $scope.getAssignedElement = function(allottedElement) {
+        for(var i in $scope.elements) {
+            if($scope.page.elements[i].id == allottedElement) {
+                return i;
+            }
+        }
+    };
+    
+    $scope.removeElementFromPage = function(page, elemId) {
+        var assigned = $scope.getAssignedElement(elemId);
+        if(assigned && assigned >= 0) {
+            AjaxService.call('pages/' + $scope.page.id + '/element/' + elemId, 'DELETE').success(function(data, status, headers, config) {
+                $scope.page.elements.splice(assigned, 1);
+                AjaxService.call('elements/', 'GET').success(function(data, status, headers, config) {
+                    $scope.elements = data;
+                });
+            });
+        }
+    };
 
 } ]);

@@ -16,12 +16,12 @@
 	            <input ng-model="item.name" type="text" />
 	        </md-input-container>
 	        <md-input-container class="md-block" flex-gt-xs>
-                <label>Page</label>
+                <label>Identification Type</label>
                 <md-select ng-model="item.page">
                    <md-option ng-repeat="(index,type) in identificationTypes" value="{{index}}" ng-selected="index == item.identificationType ? true : index == 0">{{type}}</md-option>
                 </md-select>
             </md-input-container>
-	        <md-input-container class="md-block" flex-gt-xs>
+            <md-input-container class="md-block" flex-gt-xs>
                 <label>Identity</label>
                 <input ng-model="item.identity" type="text" />
             </md-input-container>

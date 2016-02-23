@@ -16,4 +16,8 @@ public class PageService extends AbstractServiceImpl<Integer, Page, PageReposito
     public PageRepository repository() {
         return pageRepository;
     }
+
+	public void removePageElementById(Page item, int elementId) {
+		
+	}
 }

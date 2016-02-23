@@ -1,12 +1,5 @@
 package com.cba.sdgui.model.entity;
 
-import com.cba.sdgui.enums.ActionType;
-import com.cba.sdgui.enums.WaitType;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.io.Serializable;
 
 import javax.persistence.AttributeOverride;
@@ -21,6 +14,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
+import com.cba.sdgui.enums.ActionType;
+import com.cba.sdgui.enums.WaitType;
 
 @Entity
 @Table(name = "sd_test_step", uniqueConstraints = @UniqueConstraint(columnNames = { "id" }))
@@ -54,6 +54,7 @@ public class SDTestStep extends BaseEntity<Integer> implements Serializable, Com
     private Boolean needVerification;
     private Boolean visibility;
     private Boolean enabledisable;
+    private Page page;
     private Element element;
 
     @Override
@@ -181,6 +182,15 @@ public class SDTestStep extends BaseEntity<Integer> implements Serializable, Com
     }
 
     @OneToOne(fetch = FetchType.EAGER, optional = false)
+    public Page getPage() {
+		return page;
+	}
+
+	public void setPage(Page page) {
+		this.page = page;
+	}
+
+	@OneToOne(fetch = FetchType.EAGER, optional = false)
     public Element getElement() {
         return element;
     }
