@@ -123,7 +123,7 @@ public class TestResourceImpl extends AbstractResourceImpl<Integer, SDTest, SDTe
                     }
                     newRun.setTest(test);
                     testRunService.save(newRun);
-                    runHelperService.startTest(test, newRun, testRunRequest.getHeadless(), testRunRequest.getMaximizeWindow() != null && testRunRequest.getMaximizeWindow());
+                    runHelperService.startTest(id, newRun, testRunRequest.getHeadless(), testRunRequest.getMaximizeWindow() != null && testRunRequest.getMaximizeWindow());
                     responseStatus = HttpStatus.OK;
                 } else {
                     responseStatus = HttpStatus.BAD_REQUEST;

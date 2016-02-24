@@ -3,13 +3,19 @@ package com.cba.sdgui.service;
 import com.cba.sdgui.enums.BrowserType;
 import com.cba.sdgui.enums.StepResultType;
 import com.cba.sdgui.enums.WaitType;
+import com.cba.sdgui.model.entity.Element;
 import com.cba.sdgui.model.entity.SDTest;
 import com.cba.sdgui.model.entity.SDTestStep;
 import com.cba.sdgui.model.entity.StepInstance;
 import com.cba.sdgui.model.entity.TestRun;
+import com.cba.sdgui.repository.SDTestRepository;
 import com.gargoylesoftware.htmlunit.BrowserVersion;
+import com.gargoylesoftware.htmlunit.IncorrectnessListener;
+import com.gargoylesoftware.htmlunit.InteractivePage;
+import com.gargoylesoftware.htmlunit.ScriptException;
 import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
 import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -28,8 +34,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.webbitserver.handler.exceptions.SilentExceptionHandler;
 
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,8 +51,12 @@ public class RunHelperService {
 
     @Autowired
     private StepInstanceService stepInstanceService;
+    
+    @Autowired
+    private SDTestRepository sdTestRepository;
 
-    public void startTest(SDTest test, TestRun run, Boolean headless, Boolean maximizeWindow) {
+    public void startTest(Integer id, TestRun run, Boolean headless, Boolean maximizeWindow) {
+        SDTest test = sdTestRepository.findById(id);
         BrowserType browserType = run.getBrowser().getType();
 
         DesiredCapabilities capabilities = null;
@@ -55,6 +68,7 @@ public class RunHelperService {
             break;
         }
         Proxy proxy = new Proxy();
+        WebClient webClient = null;
         if (null != run.getWithProxy() && run.getWithProxy()) {
             proxy.setProxyType(translateProxy(run.getProxy().getType()));
             proxy.setHttpProxy(run.getProxy().getHttpHost() + ":" + run.getProxy().getHttpPort());
@@ -75,11 +89,46 @@ public class RunHelperService {
                 try {
                     Method method = htmlUnitDriver.getClass().getDeclaredMethod("getWebClient");
                     method.setAccessible(true);
-                    WebClient webClient = (WebClient) method.invoke(htmlUnitDriver);
+                    webClient = (WebClient) method.invoke(htmlUnitDriver);
                     webClient.setCssErrorHandler(new SilentCssErrorHandler());
+                    webClient.setJavaScriptErrorListener(new JavaScriptErrorListener() {
+                        
+                        @Override
+                        public void timeoutError(InteractivePage page, long allowedTime, long executionTime) {
+                            
+                        }
+                        
+                        @Override
+                        public void scriptException(InteractivePage page, ScriptException scriptException) {
+                            
+                        }
+                        
+                        @Override
+                        public void malformedScriptURL(InteractivePage page, String url, MalformedURLException malformedURLException) {
+                            
+                        }
+                        
+                        @Override
+                        public void loadScriptError(InteractivePage page, URL scriptUrl, Exception exception) {
+                            
+                        }
+                    });
+                    webClient.setIncorrectnessListener(new IncorrectnessListener() {
+                        @Override
+                        public void notify(String message, Object origin) {
+                            
+                        }
+                    });
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
+//                webDriver = new JBrowserDriver(capabilities);
+//                if (null != run.getWithProxy() && run.getWithProxy()) {
+//                    System.setProperty("http.proxyHost", run.getProxy().getHttpHost());
+//                    System.setProperty("http.proxyPort", run.getProxy().getHttpPort().toString());
+//                    System.setProperty("https.proxyHost", run.getProxy().getHttpHost());
+//                    System.setProperty("https.proxyPort", run.getProxy().getHttpPort().toString());
+//                }
             } else {
                 System.setProperty(run.getBrowser().getType().getDriverProperty(), run.getBrowser().getDriverPath());
                 webDriver = new ChromeDriver(capabilities);
@@ -127,7 +176,7 @@ public class RunHelperService {
                             }
                         }
                         if (eachStep.getIsAction()) {
-                            performAction(eachStep, element, webDriver, webElement);
+                            performAction(eachStep, element, webDriver, webElement, webClient, headless);
                         }
                         boolean needsVerification = null != eachStep.getNeedVerification() && eachStep.getNeedVerification() == true;
                         if (needsVerification) {
@@ -177,7 +226,7 @@ public class RunHelperService {
         return ProxyType.valueOf(ProxyType.class, type.toString());
     }
 
-    protected void performAction(SDTestStep eachStep, By by, WebDriver driver, WebElement webElement) {
+    protected void performAction(SDTestStep eachStep, By by, WebDriver driver, WebElement webElement, WebClient webClient, Boolean headless) {
         webDriver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         switch (eachStep.getActionType()) {
         case SendKeys:
@@ -192,6 +241,9 @@ public class RunHelperService {
         default:
             break;
         }
+//        if(headless && null != webClient) {
+//            webClient.waitForBackgroundJavaScript(30000);
+//        }
     }
 
     protected ExpectedCondition<WebElement> getWaitCondition(By element, SDTestStep eachStep) {
@@ -211,9 +263,10 @@ public class RunHelperService {
 
     public By getElement(SDTestStep eachStep) {
         By element = null;
-        String elementIdentity = eachStep.getElement().getIdentity();
+        Element elem = eachStep.getElement();
+        String elementIdentity = elem.getIdentity();
         if (StringUtils.isNotBlank(elementIdentity)) {
-            switch (eachStep.getElement().getIdentificationType()) {
+            switch (elem.getIdentificationType()) {
             case Id:
                 element = By.id(elementIdentity);
                 break;

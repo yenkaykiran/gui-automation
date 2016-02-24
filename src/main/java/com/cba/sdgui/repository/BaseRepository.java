@@ -10,4 +10,6 @@ import java.io.Serializable;
 @NoRepositoryBean
 public interface BaseRepository<E extends BaseEntity<ID>, ID extends Serializable> extends JpaRepository<E, ID> {
 
+    public E findById(ID id);
+
 }

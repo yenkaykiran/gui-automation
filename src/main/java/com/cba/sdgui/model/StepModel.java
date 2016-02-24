@@ -1,46 +1,16 @@
-package com.cba.sdgui.model.entity;
+package com.cba.sdgui.model;
 
 import com.cba.sdgui.enums.ActionType;
 import com.cba.sdgui.enums.WaitType;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.io.Serializable;
 
-import javax.persistence.AttributeOverride;
-import javax.persistence.AttributeOverrides;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
-
-@Entity
-@Table(name = "sd_test_step", uniqueConstraints = @UniqueConstraint(columnNames = { "id" }))
-@AttributeOverrides(value = {
-        @AttributeOverride(name = "id", column = @Column(name = "id", insertable = false, updatable = false)),
-        @AttributeOverride(name = "name", column = @Column(name = "name")),
-        @AttributeOverride(name = "isWait", column = @Column(name = "is_wait")),
-        @AttributeOverride(name = "waitTime", column = @Column(name = "wait_time")),
-        @AttributeOverride(name = "isAction", column = @Column(name = "is_action")),
-        @AttributeOverride(name = "actionType", column = @Column(name = "action_type")),
-        @AttributeOverride(name = "keys", column = @Column(name = "keys_to_send")),
-        @AttributeOverride(name = "waitType", column = @Column(name = "wait_type")),
-        @AttributeOverride(name = "stepOrder", column = @Column(name = "step_order")),
-        @AttributeOverride(name = "needVerification", column = @Column(name = "need_verification")),
-        @AttributeOverride(name = "visibility", column = @Column(name = "visibility")),
-        @AttributeOverride(name = "enabledisable", column = @Column(name = "enabledisable"))
-})
-public class SDTestStep extends BaseEntity<Integer> implements Serializable, Comparable<SDTestStep> {
+public class StepModel implements Serializable, Comparable<StepModel> {
 
     private static final long serialVersionUID = 4289151143888117381L;
 
+    private Integer id;
+    private Boolean enabled;
     private String name;
     private Boolean isWait;
     private Integer waitTime;
@@ -49,21 +19,16 @@ public class SDTestStep extends BaseEntity<Integer> implements Serializable, Com
     private String keys;
     private WaitType waitType;
     private Integer stepOrder = 1;
-    private SDTest test;
     private Boolean needVerification;
     private Boolean visibility;
     private Boolean enabledisable;
-    private Page page;
-    private Element element;
+    private Integer page;
+    private Integer element;
 
-    @Override
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     public Integer getId() {
         return this.id;
     }
 
-    @Override
     public void setId(Integer id) {
         this.id = id;
     }
@@ -171,57 +136,32 @@ public class SDTestStep extends BaseEntity<Integer> implements Serializable, Com
         this.enabledisable = enabledisable;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    public SDTest getTest() {
-        return test;
+    public Integer getPage() {
+        return page;
     }
 
-    public void setTest(SDTest test) {
-        this.test = test;
+    public void setPage(Integer page) {
+        this.page = page;
     }
 
-    @ManyToOne(fetch = FetchType.EAGER, optional = false)
-    public Page getPage() {
-		return page;
-	}
-
-	public void setPage(Page page) {
-		this.page = page;
-	}
-
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-    public Element getElement() {
+    public Integer getElement() {
         return element;
     }
 
-    public void setElement(Element element) {
+    public void setElement(Integer element) {
         this.element = element;
     }
 
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this);
+    public Boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(Boolean enabled) {
+        this.enabled = enabled;
     }
 
     @Override
-    public int hashCode() {
-        return (new HashCodeBuilder()).append(this.id).toHashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        SDTestStep rhs = (SDTestStep) obj;
-        return (new EqualsBuilder()).append(this.id, rhs.id).isEquals();
-    }
-
-    @Override
-    public int compareTo(SDTestStep o) {
+    public int compareTo(StepModel o) {
         int result = 0;
         if (this.getStepOrder() != null && o.getStepOrder() != null) {
             result = this.getStepOrder() - o.getStepOrder();

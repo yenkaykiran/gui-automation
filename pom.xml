@@ -154,6 +154,16 @@
 		</dependency>
 		<dependency>
 			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-remote-driver</artifactId>
+			<version>2.51.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-server</artifactId>
+			<version>2.51.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
 			<artifactId>selenium-common</artifactId>
 			<version>2.0b1</version>
 		</dependency>
@@ -197,6 +207,17 @@
 			<artifactId>xml-apis</artifactId>
 			<version>1.4.01</version>
 		</dependency>
+		<dependency>
+            <groupId>com.machinepublishers</groupId>
+            <artifactId>jbrowserdriver</artifactId>
+            <version>0.10.0</version>
+            <exclusions>
+				<exclusion>
+					<groupId>org.seleniumhq.selenium</groupId>
+					<artifactId>*</artifactId>
+				</exclusion>
+			</exclusions>
+        </dependency>
 	</dependencies>
 	<build>
 		<finalName>sd-gui-automation</finalName>
