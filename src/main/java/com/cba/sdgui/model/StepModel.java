@@ -1,6 +1,7 @@
 package com.cba.sdgui.model;
 
 import com.cba.sdgui.enums.ActionType;
+import com.cba.sdgui.enums.ExtractType;
 import com.cba.sdgui.enums.WaitType;
 
 import java.io.Serializable;
@@ -24,6 +25,8 @@ public class StepModel implements Serializable, Comparable<StepModel> {
     private Boolean enabledisable;
     private Integer page;
     private Integer element;
+    private Boolean extractData;
+    private ExtractType extractType;
 
     public Integer getId() {
         return this.id;
@@ -158,6 +161,22 @@ public class StepModel implements Serializable, Comparable<StepModel> {
 
     public void setEnabled(Boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Boolean getExtractData() {
+        return extractData;
+    }
+
+    public void setExtractData(Boolean extractData) {
+        this.extractData = extractData;
+    }
+
+    public ExtractType getExtractType() {
+        return extractType;
+    }
+
+    public void setExtractType(ExtractType extractType) {
+        this.extractType = extractType;
     }
 
     @Override

@@ -15,6 +15,7 @@ import com.cba.sdgui.service.SDTestService;
 import com.cba.sdgui.service.TestRunService;
 import com.cba.sdgui.service.UrlService;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -153,6 +154,36 @@ public class TestResourceImpl extends AbstractResourceImpl<Integer, SDTest, SDTe
             }
         }
         return runRequests;
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/{id}/copy")
+    @ResponseBody
+    public ResponseEntity<SDTest> copyTestWithSteps(@PathVariable("id") Integer testId, HttpServletRequest httpRequest) {
+        HttpHeaders headers = new HttpHeaders();
+        HttpStatus responseStatus = null;
+        SDTest entity = new SDTest();
+        if (null != testId) {
+            SDTest fromDb = getService().findById(testId);
+            if (null != fromDb.getId()) {
+                try {
+                    BeanUtils.copyProperties(fromDb, entity, "steps");
+                    entity.setId(null);
+                    for (SDTestStep eachStep : fromDb.getSteps()) {
+                        eachStep.setId(null);
+                        eachStep.setTest(entity);
+                        entity.getSteps().add(eachStep);
+                    }
+
+                    entity.setName(fromDb.getName() + "_COPIED");
+                    entity = getService().save(entity);
+                    entity.setSteps(null);
+                    responseStatus = HttpStatus.OK;
+                } catch (Exception e) {
+                    responseStatus = HttpStatus.BAD_REQUEST;
+                }
+            }
+        }
+        return new ResponseEntity<SDTest>(entity, headers, responseStatus);
     }
 
     private TestRunModel toRunModel(TestRun run) {

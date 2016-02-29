@@ -1,8 +1,8 @@
 package com.cba.sdgui.model.entity;
 
 import com.cba.sdgui.enums.ActionType;
+import com.cba.sdgui.enums.ExtractType;
 import com.cba.sdgui.enums.IdentifyBy;
-import com.cba.sdgui.enums.StepResultType;
 import com.cba.sdgui.enums.WaitType;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -44,7 +44,10 @@ import javax.persistence.UniqueConstraint;
         @AttributeOverride(name = "exception", column = @Column(name = "exception")),
         @AttributeOverride(name = "needVerification", column = @Column(name = "need_verification")),
         @AttributeOverride(name = "visibilityCheck", column = @Column(name = "visibility_check")),
-        @AttributeOverride(name = "enableCheck", column = @Column(name = "enable_check"))
+        @AttributeOverride(name = "enableCheck", column = @Column(name = "enable_check")),
+        @AttributeOverride(name = "extractData", column = @Column(name = "extract_data")),
+        @AttributeOverride(name = "extractType", column = @Column(name = "extract_type")),
+        @AttributeOverride(name = "extractedData", column = @Column(name = "extracted_data"))
 })
 public class StepInstance extends BaseEntity<Integer> implements Serializable, Comparable<StepInstance> {
 
@@ -69,6 +72,9 @@ public class StepInstance extends BaseEntity<Integer> implements Serializable, C
 	private Boolean needVerification;
 	private String visibilityCheck;
     private String enableCheck;
+    private Boolean extractData;
+    private ExtractType extractType;
+    private String extractedData;
 
 	@Override
 	@Id
@@ -253,6 +259,31 @@ public class StepInstance extends BaseEntity<Integer> implements Serializable, C
 
     public void setEnableCheck(String enableCheck) {
         this.enableCheck = enableCheck;
+    }
+
+    public Boolean getExtractData() {
+        return extractData;
+    }
+
+    public void setExtractData(Boolean extractData) {
+        this.extractData = extractData;
+    }
+
+    public ExtractType getExtractType() {
+        return extractType;
+    }
+
+    public void setExtractType(ExtractType extractType) {
+        this.extractType = extractType;
+    }
+
+    @Lob
+    public String getExtractedData() {
+        return extractedData;
+    }
+
+    public void setExtractedData(String extractedData) {
+        this.extractedData = extractedData;
     }
 
     @Override

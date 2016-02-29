@@ -27,6 +27,17 @@
                         </md-fab-actions>
                     </md-fab-speed-dial>
                 </div>
+                <div class="lock-size" layout="row" layout-align="center center">
+                    <md-fab-speed-dial md-open="true" md-direction="left">
+                        <md-fab-trigger></md-fab-trigger>
+                        <md-fab-actions>
+                            <md-button aria-label="Extracted Data" class="md-fab md-mini" ng-hide="!item.extractData">
+                                <md-tooltip>{{getExtractedData(item)}}</md-tooltip>
+                                <i class="material-icons">receipt</i>
+                            </md-button>
+                        </md-fab-actions>
+                    </md-fab-speed-dial>
+                </div>
             </md-list-item>
         </md-list>
     </md-dialog-content>

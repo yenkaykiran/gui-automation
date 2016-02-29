@@ -9,13 +9,8 @@ import com.cba.sdgui.model.entity.SDTestStep;
 import com.cba.sdgui.model.entity.StepInstance;
 import com.cba.sdgui.model.entity.TestRun;
 import com.cba.sdgui.repository.SDTestRepository;
-import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.IncorrectnessListener;
-import com.gargoylesoftware.htmlunit.InteractivePage;
-import com.gargoylesoftware.htmlunit.ScriptException;
-import com.gargoylesoftware.htmlunit.SilentCssErrorHandler;
 import com.gargoylesoftware.htmlunit.WebClient;
-import com.gargoylesoftware.htmlunit.javascript.JavaScriptErrorListener;
+import com.google.gson.Gson;
 
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
@@ -25,23 +20,22 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.browserlaunchers.CapabilityType;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.webbitserver.handler.exceptions.SilentExceptionHandler;
 
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -51,9 +45,12 @@ public class RunHelperService {
 
     @Autowired
     private StepInstanceService stepInstanceService;
-    
+
     @Autowired
     private SDTestRepository sdTestRepository;
+
+    @Value("${phantomjs.binary.path}")
+    private String phantomDriverPath;
 
     public void startTest(Integer id, TestRun run, Boolean headless, Boolean maximizeWindow) {
         SDTest test = sdTestRepository.findById(id);
@@ -79,7 +76,7 @@ public class RunHelperService {
         switch (browserType) {
         case Chrome:
             if (headless) {
-                webDriver = new HtmlUnitDriver(BrowserVersion.CHROME);
+                /* webDriver = new HtmlUnitDriver(BrowserVersion.CHROME);
 
                 HtmlUnitDriver htmlUnitDriver = (HtmlUnitDriver) webDriver;
                 if (null != run.getWithProxy() && run.getWithProxy()) {
@@ -121,14 +118,16 @@ public class RunHelperService {
                     });
                 } catch (Exception e) {
                     e.printStackTrace();
-                }
-//                webDriver = new JBrowserDriver(capabilities);
-//                if (null != run.getWithProxy() && run.getWithProxy()) {
-//                    System.setProperty("http.proxyHost", run.getProxy().getHttpHost());
-//                    System.setProperty("http.proxyPort", run.getProxy().getHttpPort().toString());
-//                    System.setProperty("https.proxyHost", run.getProxy().getHttpHost());
-//                    System.setProperty("https.proxyPort", run.getProxy().getHttpPort().toString());
-//                }
+                } */
+                //                webDriver = new JBrowserDriver(capabilities);
+                //                if (null != run.getWithProxy() && run.getWithProxy()) {
+                //                    System.setProperty("http.proxyHost", run.getProxy().getHttpHost());
+                //                    System.setProperty("http.proxyPort", run.getProxy().getHttpPort().toString());
+                //                    System.setProperty("https.proxyHost", run.getProxy().getHttpHost());
+                //                    System.setProperty("https.proxyPort", run.getProxy().getHttpPort().toString());
+                //                }
+                System.setProperty("phantomjs.binary.path", phantomDriverPath);
+                webDriver = new PhantomJSDriver(capabilities);
             } else {
                 System.setProperty(run.getBrowser().getType().getDriverProperty(), run.getBrowser().getDriverPath());
                 webDriver = new ChromeDriver(capabilities);
@@ -182,6 +181,9 @@ public class RunHelperService {
                         if (needsVerification) {
                             startVerification(eachStep, stepInstance, webElement);
                         }
+                        if (null != eachStep.getExtractData() && eachStep.getExtractData()) {
+                            extractRequiredDataFromPage(eachStep, stepInstance, element);
+                        }
                         stepInstance.setStatus(StepResultType.FINISHED.name());
                     } else {
                         stepInstance.setStatus(StepResultType.SKIPPED.name());
@@ -203,6 +205,37 @@ public class RunHelperService {
             }
             stepInstanceService.saveAll(insts);
         }
+    }
+
+    private void extractRequiredDataFromPage(SDTestStep eachStep, StepInstance stepInstance, By by) {
+        StringBuilder data = new StringBuilder();
+        switch (eachStep.getExtractType()) {
+        case TEXT:
+            data.append(webDriver.findElement(by).getText());
+            break;
+        case SIZE:
+            data.append(webDriver.findElements(by).size());
+        case TABLE_DATA:
+            Map<Integer, String[]> tableDataAsMap = new HashMap<Integer, String[]>();
+            int rowCount = webDriver.findElements(By.xpath(eachStep.getElement().getIdentity() + "/tr")).size();
+            int colCount = webDriver.findElements(By.xpath(eachStep.getElement().getIdentity() + "/tr[1]/td")).size();
+            String firstPart = eachStep.getElement().getIdentity() + "/tr[";
+            String secondPart = "]/td[";
+            String thirdPart = "]";
+            for (int i = 1; i <= rowCount; i++) {
+                String[] rowData = new String[colCount];
+                for (int j = 1; j <= colCount; j++) {
+                    String finalXpath = firstPart + i + secondPart + j + thirdPart;
+                    rowData[j - 1] = webDriver.findElement(By.xpath(finalXpath)).getText();
+                }
+                tableDataAsMap.put(i - 1, rowData);
+            }
+            Gson json = new Gson();
+            data.append(json.toJson(tableDataAsMap));
+        default:
+            break;
+        }
+        stepInstance.setExtractedData(data.toString());
     }
 
     private void startVerification(SDTestStep eachStep, StepInstance inst, WebElement webElement) {
@@ -241,9 +274,9 @@ public class RunHelperService {
         default:
             break;
         }
-//        if(headless && null != webClient) {
-//            webClient.waitForBackgroundJavaScript(30000);
-//        }
+        //        if(headless && null != webClient) {
+        //            webClient.waitForBackgroundJavaScript(30000);
+        //        }
     }
 
     protected ExpectedCondition<WebElement> getWaitCondition(By element, SDTestStep eachStep) {

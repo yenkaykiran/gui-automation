@@ -44,6 +44,19 @@ sdGuiAutoApp.controller('TestsController', [ '$scope', '$rootScope', 'AjaxServic
 		});
     };
     
+    $scope.copyItem = function(item, $event) {
+		$scope.confirmDialog({
+			title: 'Are you sure to copy this ?',
+			content: 'Test Name: ' + item.name,
+			okLabel: 'Copy',
+			cancelLabel: 'Cancel'
+		}, $event, function() {
+			AjaxService.call($scope.restUrl + item.id + '/copy', 'GET').success(function(data, status, headers, config) {
+                $scope.load();
+            });
+		});
+    };
+    
     $scope.launchSteps = function(item) {
         $location.path("/home/tests/" + item.id + "/steps");
     };
@@ -138,6 +151,19 @@ sdGuiAutoApp.controller('TestStepsController', [ '$scope', '$rootScope', 'AjaxSe
         });
     };
     
+    $scope.copyItem = function(item, $event) {
+		$scope.confirmDialog({
+			title: 'Are you sure to copy this ?',
+			content: 'Step Name: ' + item.name,
+			okLabel: 'Copy',
+			cancelLabel: 'Cancel'
+		}, $event, function() {
+			AjaxService.call($scope.restUrl + item.id + '/copy', 'GET').success(function(data, status, headers, config) {
+                $scope.load();
+            });
+		});
+    };
+    
     $scope.enableDisable = function(item) {
         AjaxService.call($scope.restUrl, 'POST', item).success(function(data, status, headers, config) {
             $scope.item = data;
@@ -165,6 +191,9 @@ sdGuiAutoApp.controller('AddEditTestStepController', [ '$scope', '$rootScope', '
         });
         AjaxService.call('meta/actionTypes', 'GET').success(function(data, status, headers, config) {
             $scope.actionTypes = data;
+        });
+        AjaxService.call('meta/extractTypes', 'GET').success(function(data, status, headers, config) {
+            $scope.extractTypes = data;
         });
     };
     
@@ -280,5 +309,23 @@ sdGuiAutoApp.controller('TestRunResultController', [ '$scope', '$rootScope', 'Aj
             $scope.items = data;
         });
     };
+    
+	$scope.getExtractedData = function(item) {
+		var data = "";
+		switch (item.extractType) {
+		case 0:
+			data = item.extractedData;
+			break;
+		case 1:
+			data = item.extractedData;
+			break;
+		case 2:
+			data = item.extractedData;
+			break;
+		default:
+			break;
+		}
+		return data;
+	};
 
 } ]);

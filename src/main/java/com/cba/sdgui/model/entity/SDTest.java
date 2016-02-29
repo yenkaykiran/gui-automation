@@ -5,6 +5,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.AttributeOverride;
@@ -33,7 +34,7 @@ public class SDTest extends BaseEntity<Integer> implements Serializable {
 
     private String name;
     private String description;
-    private List<SDTestStep> steps;
+    private List<SDTestStep> steps = new ArrayList<SDTestStep>();
 
     @Override
     @Id

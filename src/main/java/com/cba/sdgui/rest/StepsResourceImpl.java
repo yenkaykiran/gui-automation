@@ -7,6 +7,7 @@ import com.cba.sdgui.repository.SDTestStepRepository;
 import com.cba.sdgui.service.SDTestService;
 import com.cba.sdgui.service.SDTestStepService;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -162,6 +163,46 @@ public class StepsResourceImpl extends AbstractResourceImpl<Integer, SDTestStep,
             responseStatus = HttpStatus.BAD_REQUEST;
         }
         return new ResponseEntity<List<StepModel>>(stepsModel, headers, responseStatus);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value = "/byTest/{testId}/{stepId}/copy")
+    @ResponseBody
+    public ResponseEntity<StepModel> copyStep(@PathVariable("testId") Integer testId, @PathVariable("stepId") Integer stepId, HttpServletRequest httpRequest) {
+        HttpHeaders headers = new HttpHeaders();
+        HttpStatus responseStatus = null;
+        SDTestStep entity = new SDTestStep();
+        if (null != testId) {
+            SDTest testFromDb = sdTestService.findById(testId);
+            if (null != testFromDb.getId()) {
+                List<SDTestStep> allSteps = testFromDb.getSteps();
+                int position = getStepPosition(allSteps, stepId);
+                if (position >= 0) {
+                    SDTestStep stepToBeCopied = allSteps.get(position);
+                    try {
+                        BeanUtils.copyProperties(stepToBeCopied, entity, "test");
+                        entity.setId(null);
+                        entity.setTest(testFromDb);
+                        entity = getService().save(entity);
+                        responseStatus = HttpStatus.OK;
+                    } catch (Exception e) {
+                        responseStatus = HttpStatus.BAD_REQUEST;
+                    }
+                }
+            }
+        }
+        return new ResponseEntity<StepModel>(getService().toStepModel(entity), headers, responseStatus);
+    }
+
+    private int getStepPosition(List<SDTestStep> allSteps, Integer stepId) {
+        Integer position = -1;
+        for (int i = 0; i < allSteps.size(); i++) {
+            SDTestStep eachStep = allSteps.get(i);
+            if (eachStep.getId() == stepId) {
+                position = i;
+                break;
+            }
+        }
+        return position;
     }
 
     private Integer getStep(List<HashMap<Integer, Integer>> order, Integer id) {

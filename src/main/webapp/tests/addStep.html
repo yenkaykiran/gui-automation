@@ -38,6 +38,9 @@
                     <md-switch class="md-primary" md-no-ink aria-label="Needs Verification" ng-model="item.needVerification">
                         <label>Needs Verification</label>
                     </md-switch>
+                    <md-switch class="md-primary" md-no-ink aria-label="Need Data Extraction from Page" ng-model="item.extractData">
+                        <label>Need Data Extraction from Page</label>
+                    </md-switch>
 			    </div>
             </md-tab>
             <md-tab label="Wait Details" ng-disabled="!item.isWait">
@@ -74,6 +77,16 @@
                         <md-checkbox md-no-ink aria-label="Visibility" ng-model="item.visibility" class="md-primary">Visibility</md-checkbox>
                         <md-checkbox md-no-ink aria-label="Enabled Check" ng-model="item.enabledisable" class="md-primary">Check if Element is Enabled</md-checkbox>
                     </div>
+                </div>
+            </md-tab>
+            <md-tab label="Data Extraction" ng-disabled="!item.extractData">
+                <div class="md-dialog-content" flex>
+                    <md-input-container class="md-block" flex-gt-xs>
+                        <label>Extract Type</label>
+                        <md-select ng-model="item.extractType">
+                           <md-option ng-repeat="(index,type) in extractTypes" value="{{index}}" ng-selected="index == item.extractType ? true : index == 0">{{type}}</md-option>
+                        </md-select>
+                    </md-input-container>
                 </div>
             </md-tab>
         </md-tabs>

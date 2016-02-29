@@ -1,6 +1,7 @@
 package com.cba.sdgui.model.entity;
 
 import com.cba.sdgui.enums.ActionType;
+import com.cba.sdgui.enums.ExtractType;
 import com.cba.sdgui.enums.WaitType;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -35,7 +36,9 @@ import javax.persistence.UniqueConstraint;
         @AttributeOverride(name = "stepOrder", column = @Column(name = "step_order")),
         @AttributeOverride(name = "needVerification", column = @Column(name = "need_verification")),
         @AttributeOverride(name = "visibility", column = @Column(name = "visibility")),
-        @AttributeOverride(name = "enabledisable", column = @Column(name = "enabledisable"))
+        @AttributeOverride(name = "enabledisable", column = @Column(name = "enabledisable")),
+        @AttributeOverride(name = "extractData", column = @Column(name = "extract_data")),
+        @AttributeOverride(name = "extractType", column = @Column(name = "extract_type"))
 })
 public class SDTestStep extends BaseEntity<Integer> implements Serializable, Comparable<SDTestStep> {
 
@@ -55,6 +58,8 @@ public class SDTestStep extends BaseEntity<Integer> implements Serializable, Com
     private Boolean enabledisable;
     private Page page;
     private Element element;
+    private Boolean extractData;
+    private ExtractType extractType;
 
     @Override
     @Id
@@ -196,6 +201,22 @@ public class SDTestStep extends BaseEntity<Integer> implements Serializable, Com
 
     public void setElement(Element element) {
         this.element = element;
+    }
+
+    public Boolean getExtractData() {
+        return extractData;
+    }
+
+    public void setExtractData(Boolean extractData) {
+        this.extractData = extractData;
+    }
+
+    public ExtractType getExtractType() {
+        return extractType;
+    }
+
+    public void setExtractType(ExtractType extractType) {
+        this.extractType = extractType;
     }
 
     @Override
