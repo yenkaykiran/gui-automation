@@ -134,6 +134,8 @@ public class TestResourceImpl extends AbstractResourceImpl<Integer, SDTest, SDTe
             }
         } catch (Exception e) {
             responseStatus = HttpStatus.BAD_REQUEST;
+            headers.add("errorMessage", e.getMessage());
+            e.printStackTrace();
         }
         return new ResponseEntity<List<SDTestStep>>(stepsFromDb, headers, responseStatus);
     }

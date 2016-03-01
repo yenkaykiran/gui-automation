@@ -27,6 +27,7 @@ public class StepModel implements Serializable, Comparable<StepModel> {
     private Integer element;
     private Boolean extractData;
     private ExtractType extractType;
+    private Boolean captureScreenshot;
 
     public Integer getId() {
         return this.id;
@@ -177,6 +178,14 @@ public class StepModel implements Serializable, Comparable<StepModel> {
 
     public void setExtractType(ExtractType extractType) {
         this.extractType = extractType;
+    }
+
+    public Boolean getCaptureScreenshot() {
+        return captureScreenshot;
+    }
+
+    public void setCaptureScreenshot(Boolean captureScreenshot) {
+        this.captureScreenshot = captureScreenshot;
     }
 
     @Override

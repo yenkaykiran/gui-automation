@@ -38,7 +38,8 @@ import javax.persistence.UniqueConstraint;
         @AttributeOverride(name = "visibility", column = @Column(name = "visibility")),
         @AttributeOverride(name = "enabledisable", column = @Column(name = "enabledisable")),
         @AttributeOverride(name = "extractData", column = @Column(name = "extract_data")),
-        @AttributeOverride(name = "extractType", column = @Column(name = "extract_type"))
+        @AttributeOverride(name = "extractType", column = @Column(name = "extract_type")),
+        @AttributeOverride(name = "captureScreenshot", column = @Column(name = "capture_screenshot"))
 })
 public class SDTestStep extends BaseEntity<Integer> implements Serializable, Comparable<SDTestStep> {
 
@@ -60,6 +61,7 @@ public class SDTestStep extends BaseEntity<Integer> implements Serializable, Com
     private Element element;
     private Boolean extractData;
     private ExtractType extractType;
+    private Boolean captureScreenshot;
 
     @Override
     @Id
@@ -217,6 +219,14 @@ public class SDTestStep extends BaseEntity<Integer> implements Serializable, Com
 
     public void setExtractType(ExtractType extractType) {
         this.extractType = extractType;
+    }
+
+    public Boolean getCaptureScreenshot() {
+        return captureScreenshot;
+    }
+
+    public void setCaptureScreenshot(Boolean captureScreenshot) {
+        this.captureScreenshot = captureScreenshot;
     }
 
     @Override

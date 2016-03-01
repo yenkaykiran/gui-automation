@@ -3,23 +3,30 @@ package com.cba.sdgui.service;
 import com.cba.sdgui.enums.BrowserType;
 import com.cba.sdgui.enums.StepResultType;
 import com.cba.sdgui.enums.WaitType;
+import com.cba.sdgui.model.entity.Configuration;
 import com.cba.sdgui.model.entity.Element;
 import com.cba.sdgui.model.entity.SDTest;
 import com.cba.sdgui.model.entity.SDTestStep;
 import com.cba.sdgui.model.entity.StepInstance;
 import com.cba.sdgui.model.entity.TestRun;
+import com.cba.sdgui.repository.ConfigurationRepository;
 import com.cba.sdgui.repository.SDTestRepository;
+import com.cba.sdgui.rest.Constants;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.google.gson.Gson;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
 import org.openqa.selenium.Proxy;
 import org.openqa.selenium.Proxy.ProxyType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.browserlaunchers.CapabilityType;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -28,9 +35,10 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -49,10 +57,10 @@ public class RunHelperService {
     @Autowired
     private SDTestRepository sdTestRepository;
 
-    @Value("${phantomjs.binary.path}")
-    private String phantomDriverPath;
+    @Autowired
+    private ConfigurationRepository configurationRepository;
 
-    public void startTest(Integer id, TestRun run, Boolean headless, Boolean maximizeWindow) {
+    public void startTest(Integer id, TestRun run, Boolean headless, Boolean maximizeWindow) throws Exception {
         SDTest test = sdTestRepository.findById(id);
         BrowserType browserType = run.getBrowser().getType();
 
@@ -73,69 +81,51 @@ public class RunHelperService {
             capabilities.setCapability(CapabilityType.PROXY, proxy);
         }
 
-        switch (browserType) {
-        case Chrome:
-            if (headless) {
-                /* webDriver = new HtmlUnitDriver(BrowserVersion.CHROME);
+        if (headless) {
+            Configuration configurationUsePhantom = configurationRepository.findByName(Constants.HEADLESS_USE_PHANTOM);
+            if (null != configurationUsePhantom && configurationUsePhantom.getValue() > 0) {
+                Configuration configurationPhantomDriverPath = configurationRepository.findByName(Constants.PHANTOM_DRIVER_PARAM_NAME);
+                if (null != configurationPhantomDriverPath && StringUtils.isNotBlank(configurationPhantomDriverPath.getStrValue())) {
+                    System.setProperty(Constants.PHANTOM_DRIVER_PARAM_NAME, configurationPhantomDriverPath.getStrValue());
 
-                HtmlUnitDriver htmlUnitDriver = (HtmlUnitDriver) webDriver;
-                if (null != run.getWithProxy() && run.getWithProxy()) {
-                    htmlUnitDriver.setProxySettings(proxy);
+                    if (null != run.getWithProxy() && run.getWithProxy()) {
+                        capabilities = new DesiredCapabilities();
+                        capabilities.setCapability(CapabilityType.PROXY, proxy);
+                    }
+
+                    webDriver = new PhantomJSDriver(capabilities);
+                } else {
+                    throw new Exception("Path to Phantom Driver not defined under configuration Item: " + Constants.PHANTOM_DRIVER_PARAM_NAME);
                 }
-                htmlUnitDriver.setJavascriptEnabled(true);
-                try {
-                    Method method = htmlUnitDriver.getClass().getDeclaredMethod("getWebClient");
-                    method.setAccessible(true);
-                    webClient = (WebClient) method.invoke(htmlUnitDriver);
-                    webClient.setCssErrorHandler(new SilentCssErrorHandler());
-                    webClient.setJavaScriptErrorListener(new JavaScriptErrorListener() {
-                        
-                        @Override
-                        public void timeoutError(InteractivePage page, long allowedTime, long executionTime) {
-                            
-                        }
-                        
-                        @Override
-                        public void scriptException(InteractivePage page, ScriptException scriptException) {
-                            
-                        }
-                        
-                        @Override
-                        public void malformedScriptURL(InteractivePage page, String url, MalformedURLException malformedURLException) {
-                            
-                        }
-                        
-                        @Override
-                        public void loadScriptError(InteractivePage page, URL scriptUrl, Exception exception) {
-                            
-                        }
-                    });
-                    webClient.setIncorrectnessListener(new IncorrectnessListener() {
-                        @Override
-                        public void notify(String message, Object origin) {
-                            
-                        }
-                    });
-                } catch (Exception e) {
-                    e.printStackTrace();
-                } */
-                //                webDriver = new JBrowserDriver(capabilities);
-                //                if (null != run.getWithProxy() && run.getWithProxy()) {
-                //                    System.setProperty("http.proxyHost", run.getProxy().getHttpHost());
-                //                    System.setProperty("http.proxyPort", run.getProxy().getHttpPort().toString());
-                //                    System.setProperty("https.proxyHost", run.getProxy().getHttpHost());
-                //                    System.setProperty("https.proxyPort", run.getProxy().getHttpPort().toString());
-                //                }
-                System.setProperty("phantomjs.binary.path", phantomDriverPath);
-                webDriver = new PhantomJSDriver(capabilities);
             } else {
-                System.setProperty(run.getBrowser().getType().getDriverProperty(), run.getBrowser().getDriverPath());
+                ChromeOptions options = new ChromeOptions();
+                Configuration configurationBrowser = configurationRepository.findByName(Constants.HEADLESS_BROWSER_PATH);
+                if (null != configurationBrowser && StringUtils.isNotBlank(configurationBrowser.getStrValue())) {
+                    options.setBinary(configurationBrowser.getStrValue());
+                    options.addArguments("--off-screen-rendering-enabled");
+                } else {
+                    throw new Exception("Path to Headless Browser not defined under configuration Item: " + Constants.HEADLESS_BROWSER_PATH);
+                }
+                Configuration configurationDriver = configurationRepository.findByName(Constants.HEADLESS_DRIVER_PATH);
+                if (null != configurationDriver && StringUtils.isNotBlank(configurationDriver.getStrValue())) {
+                    System.setProperty(Constants.HEADLESS_DRIVER_PATH, configurationBrowser.getStrValue());
+                } else {
+                    throw new Exception("Path to Headless Browser Driver not defined under configuration Item: " + Constants.HEADLESS_DRIVER_PATH);
+                }
+                capabilities.setCapability(ChromeOptions.CAPABILITY, options);
                 webDriver = new ChromeDriver(capabilities);
             }
-            break;
-        default:
-            break;
+        } else {
+            switch (browserType) {
+            case Chrome:
+                System.setProperty(run.getBrowser().getType().getDriverProperty(), run.getBrowser().getDriverPath());
+                webDriver = new ChromeDriver(capabilities);
+                break;
+            default:
+                break;
+            }
         }
+
         List<StepInstance> insts = new ArrayList<StepInstance>();
         try {
             if (maximizeWindow) {
@@ -184,6 +174,11 @@ public class RunHelperService {
                         if (null != eachStep.getExtractData() && eachStep.getExtractData()) {
                             extractRequiredDataFromPage(eachStep, stepInstance, element);
                         }
+
+                        if (null != eachStep.getCaptureScreenshot() && eachStep.getCaptureScreenshot()) {
+                            captureScreenshot(eachStep, run);
+                        }
+
                         stepInstance.setStatus(StepResultType.FINISHED.name());
                     } else {
                         stepInstance.setStatus(StepResultType.SKIPPED.name());
@@ -191,6 +186,7 @@ public class RunHelperService {
                 } catch (Exception e) {
                     stepInstance.setStatus(StepResultType.EXECUTION_FAILED.name());
                     stepInstance.setException(e.getMessage());
+                    captureScreenshot(eachStep, run);
                 } finally {
                     stepInstance.setTimeConsumed(System.currentTimeMillis() - s);
                     insts.add(stepInstance);
@@ -204,6 +200,22 @@ public class RunHelperService {
                 webDriver.quit();
             }
             stepInstanceService.saveAll(insts);
+        }
+    }
+
+    private void captureScreenshot(SDTestStep eachStep, TestRun run) {
+        File screenshotFile = ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.FILE);
+        Configuration configurationScreenshotsBasePath = configurationRepository.findByName(Constants.SCREENSHOTS_BASE_PATH);
+        if (null != configurationScreenshotsBasePath && StringUtils.isNotBlank(configurationScreenshotsBasePath.getStrValue())) {
+            String path = configurationScreenshotsBasePath.getStrValue() + File.separator + run.getId() + File.separator;
+            File file = new File(path);
+            if (file.mkdirs()) {
+                try {
+                    FileUtils.copyFile(screenshotFile, new File(path + File.separator + eachStep.getName() + ".png"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -274,9 +286,6 @@ public class RunHelperService {
         default:
             break;
         }
-        //        if(headless && null != webClient) {
-        //            webClient.waitForBackgroundJavaScript(30000);
-        //        }
     }
 
     protected ExpectedCondition<WebElement> getWaitCondition(By element, SDTestStep eachStep) {
