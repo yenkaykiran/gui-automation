@@ -33,6 +33,8 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,6 +61,8 @@ public class RunHelperService {
 
     @Autowired
     private ConfigurationRepository configurationRepository;
+
+    private static final Logger logger = LoggerFactory.getLogger(RunHelperService.class);
 
     public void startTest(Integer id, TestRun run, Boolean headless, Boolean maximizeWindow) throws Exception {
         SDTest test = sdTestRepository.findById(id);
@@ -176,7 +180,7 @@ public class RunHelperService {
                         }
 
                         if (null != eachStep.getCaptureScreenshot() && eachStep.getCaptureScreenshot()) {
-                            captureScreenshot(eachStep, run);
+                            captureScreenshot(eachStep, run, stepInstance);
                         }
 
                         stepInstance.setStatus(StepResultType.FINISHED.name());
@@ -186,7 +190,7 @@ public class RunHelperService {
                 } catch (Exception e) {
                     stepInstance.setStatus(StepResultType.EXECUTION_FAILED.name());
                     stepInstance.setException(e.getMessage());
-                    captureScreenshot(eachStep, run);
+                    captureScreenshot(eachStep, run, stepInstance);
                 } finally {
                     stepInstance.setTimeConsumed(System.currentTimeMillis() - s);
                     insts.add(stepInstance);
@@ -203,18 +207,22 @@ public class RunHelperService {
         }
     }
 
-    private void captureScreenshot(SDTestStep eachStep, TestRun run) {
+    private void captureScreenshot(SDTestStep eachStep, TestRun run, StepInstance stepInstance) {
+        logger.debug("Capturing Screenshot for Run: {}", run.getId());
         File screenshotFile = ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.FILE);
         Configuration configurationScreenshotsBasePath = configurationRepository.findByName(Constants.SCREENSHOTS_BASE_PATH);
+        logger.debug("Finding config: {}", Constants.SCREENSHOTS_BASE_PATH);
         if (null != configurationScreenshotsBasePath && StringUtils.isNotBlank(configurationScreenshotsBasePath.getStrValue())) {
+            logger.debug("Base Path Found: {}", configurationScreenshotsBasePath.getStrValue());
             String path = configurationScreenshotsBasePath.getStrValue() + File.separator + run.getId() + File.separator;
             File file = new File(path);
-            if (file.mkdirs()) {
-                try {
-                    FileUtils.copyFile(screenshotFile, new File(path + File.separator + eachStep.getName() + ".png"));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            file.mkdirs();
+            try {
+                logger.debug("Creating File: {}", path + File.separator + eachStep.getName() + ".png");
+                FileUtils.copyFile(screenshotFile, new File(path + File.separator + eachStep.getName() + ".png"));
+                stepInstance.setCaptureScreenshot(true);
+            } catch (IOException e) {
+                logger.error("Failed to create screenshot", e);
             }
         }
     }
@@ -275,14 +283,15 @@ public class RunHelperService {
         webDriver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
         switch (eachStep.getActionType()) {
         case SendKeys:
-            webElement.sendKeys(eachStep.getKeys());
+            Actions action = new Actions(driver);
+            action.moveToElement(webElement).click().sendKeys(eachStep.getKeys()).perform();
             break;
         case Click:
             webElement.click();
             break;
         case MOVE_TO_ELEMENT:
-            Actions action = new Actions(driver);
-            action.moveToElement(webElement).build().perform();
+            Actions action1 = new Actions(driver);
+            action1.moveToElement(webElement).build().perform();
         default:
             break;
         }

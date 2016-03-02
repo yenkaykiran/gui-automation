@@ -35,6 +35,11 @@
                                 <md-tooltip>{{getExtractedData(item)}}</md-tooltip>
                                 <i class="material-icons">receipt</i>
                             </md-button>
+                            <a href="{{getBaseUrl() + restUrl + item.id}}" ng-hide="true" target="_blank" title="{{item.name}}" id="{{item.id}}">{{item.name}}</a>
+                            <md-button aria-label="Download Screenshot" class="md-fab md-mini" ng-hide="!item.captureScreenshot" ng-click="downloadScreenshot(item)">
+                                <md-tooltip>Download Screenshot</md-tooltip>
+                                <i class="material-icons">camera_alt</i>
+                            </md-button>
                         </md-fab-actions>
                     </md-fab-speed-dial>
                 </div>

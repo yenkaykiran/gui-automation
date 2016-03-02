@@ -15,6 +15,7 @@ import com.cba.sdgui.service.SDTestService;
 import com.cba.sdgui.service.TestRunService;
 import com.cba.sdgui.service.UrlService;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -102,18 +103,14 @@ public class TestResourceImpl extends AbstractResourceImpl<Integer, SDTest, SDTe
         HttpHeaders headers = new HttpHeaders();
         HttpStatus responseStatus = null;
         List<SDTestStep> stepsFromDb = null;
+        TestRun newRun = new TestRun();
         try {
             if (null != id) {
                 SDTest test = getService().findById(id);
                 if (null != test) {
-                    TestRun newRun = new TestRun();
                     Url url = urlService.findById(testRunRequest.getUrl());
                     if (null != url) {
                         newRun.setUrl(url);
-                    }
-                    Browser browser = browsersService.findById(testRunRequest.getBrowser());
-                    if (null != browser) {
-                        newRun.setBrowser(browser);
                     }
                     if (null != testRunRequest.getWithProxy() && testRunRequest.getWithProxy() == true) {
                         Proxy proxy = proxyService.findById(testRunRequest.getProxy());
@@ -122,9 +119,14 @@ public class TestResourceImpl extends AbstractResourceImpl<Integer, SDTest, SDTe
                             newRun.setProxy(proxy);
                         }
                     }
+                    boolean headless = null != testRunRequest.getHeadless() && testRunRequest.getHeadless() == true;
+                    Browser browser = browsersService.findById(testRunRequest.getBrowser());
+                    if (null != browser) {
+                        newRun.setBrowser(browser);
+                    }
                     newRun.setTest(test);
-                    testRunService.save(newRun);
-                    runHelperService.startTest(id, newRun, testRunRequest.getHeadless(), testRunRequest.getMaximizeWindow() != null && testRunRequest.getMaximizeWindow());
+                    newRun = testRunService.save(newRun);
+                    runHelperService.startTest(id, newRun, headless, testRunRequest.getMaximizeWindow() != null && testRunRequest.getMaximizeWindow());
                     responseStatus = HttpStatus.OK;
                 } else {
                     responseStatus = HttpStatus.BAD_REQUEST;
@@ -135,7 +137,10 @@ public class TestResourceImpl extends AbstractResourceImpl<Integer, SDTest, SDTe
         } catch (Exception e) {
             responseStatus = HttpStatus.BAD_REQUEST;
             headers.add("errorMessage", e.getMessage());
+            newRun.setException(ArrayUtils.toString(e.getStackTrace(), e.getMessage()));
             e.printStackTrace();
+        } finally {
+            testRunService.save(newRun);
         }
         return new ResponseEntity<List<SDTestStep>>(stepsFromDb, headers, responseStatus);
     }

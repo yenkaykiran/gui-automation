@@ -47,7 +47,8 @@ import javax.persistence.UniqueConstraint;
         @AttributeOverride(name = "enableCheck", column = @Column(name = "enable_check")),
         @AttributeOverride(name = "extractData", column = @Column(name = "extract_data")),
         @AttributeOverride(name = "extractType", column = @Column(name = "extract_type")),
-        @AttributeOverride(name = "extractedData", column = @Column(name = "extracted_data"))
+        @AttributeOverride(name = "extractedData", column = @Column(name = "extracted_data")),
+        @AttributeOverride(name = "captureScreenshot", column = @Column(name = "capture_screenshot"))
 })
 public class StepInstance extends BaseEntity<Integer> implements Serializable, Comparable<StepInstance> {
 
@@ -75,6 +76,7 @@ public class StepInstance extends BaseEntity<Integer> implements Serializable, C
     private Boolean extractData;
     private ExtractType extractType;
     private String extractedData;
+    private Boolean captureScreenshot;
 
 	@Override
 	@Id
@@ -284,6 +286,14 @@ public class StepInstance extends BaseEntity<Integer> implements Serializable, C
 
     public void setExtractedData(String extractedData) {
         this.extractedData = extractedData;
+    }
+
+    public Boolean getCaptureScreenshot() {
+        return captureScreenshot;
+    }
+
+    public void setCaptureScreenshot(Boolean captureScreenshot) {
+        this.captureScreenshot = captureScreenshot;
     }
 
     @Override

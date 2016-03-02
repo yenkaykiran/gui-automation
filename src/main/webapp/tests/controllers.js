@@ -262,6 +262,7 @@ sdGuiAutoApp.controller('TestsRunController', [ '$scope', '$rootScope', 'AjaxSer
             $scope.load();
         });
     };
+    
 } ]);
 
 sdGuiAutoApp.controller('AddTestRunController', [ '$scope', '$rootScope', 'AjaxService', '$controller', function($scope, $rootScope, AjaxService, $controller) {
@@ -327,5 +328,13 @@ sdGuiAutoApp.controller('TestRunResultController', [ '$scope', '$rootScope', 'Aj
 		}
 		return data;
 	};
+	
+	$scope.getBaseUrl = function() {
+		return AjaxService.baseUrl();
+	};
+	
+	$scope.downloadScreenshot = function(item) {
+		window.open($("#" + item.id).attr('href'),'_blank');
+    };
 
 } ]);

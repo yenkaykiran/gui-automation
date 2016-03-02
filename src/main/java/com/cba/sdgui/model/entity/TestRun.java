@@ -1,5 +1,9 @@
 package com.cba.sdgui.model.entity;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.io.Serializable;
 
 import javax.persistence.AttributeOverride;
@@ -10,105 +14,113 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @Entity
 @Table(name = "sd_test_run", uniqueConstraints = @UniqueConstraint(columnNames = { "id" }))
 @AttributeOverrides(value = {
         @AttributeOverride(name = "id", column = @Column(name = "id", insertable = false, updatable = false)),
-        @AttributeOverride(name = "withProxy", column = @Column(name = "with_proxy"))
+        @AttributeOverride(name = "withProxy", column = @Column(name = "with_proxy")),
+        @AttributeOverride(name = "exception", column = @Column(name = "exception"))
 })
 public class TestRun extends BaseEntity<Integer> implements Serializable {
 
-	private static final long serialVersionUID = 4289151143888117381L;
+    private static final long serialVersionUID = 4289151143888117381L;
 
-	private Boolean withProxy;
-	private Url url;
-	private Browser browser;
-	private Proxy proxy;
-	private SDTest test;
+    private Boolean withProxy;
+    private String exception;
+    private Url url;
+    private Browser browser;
+    private Proxy proxy;
+    private SDTest test;
 
-	@Override
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	public Integer getId() {
-		return this.id;
-	}
+    @Override
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    public Integer getId() {
+        return this.id;
+    }
 
-	@Override
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    @Override
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-	public Boolean getWithProxy() {
-		return withProxy;
-	}
+    public Boolean getWithProxy() {
+        return withProxy;
+    }
 
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-	public Url getUrl() {
-		return url;
-	}
+    @Lob
+    public String getException() {
+        return exception;
+    }
 
-	public void setUrl(Url url) {
-		this.url = url;
-	}
+    public void setException(String exception) {
+        this.exception = exception;
+    }
 
-	@ManyToOne(fetch = FetchType.EAGER, optional = false)
-	public Browser getBrowser() {
-		return browser;
-	}
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    public Url getUrl() {
+        return url;
+    }
 
-	@ManyToOne(fetch = FetchType.EAGER, optional = true)
-	public Proxy getProxy() {
-		return proxy;
-	}
+    public void setUrl(Url url) {
+        this.url = url;
+    }
 
-	public void setWithProxy(Boolean withProxy) {
-		this.withProxy = withProxy;
-	}
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    public Browser getBrowser() {
+        return browser;
+    }
 
-	public void setBrowser(Browser browser) {
-		this.browser = browser;
-	}
+    @ManyToOne(fetch = FetchType.EAGER, optional = true)
+    public Proxy getProxy() {
+        return proxy;
+    }
 
-	public void setProxy(Proxy proxy) {
-		this.proxy = proxy;
-	}
+    public void setWithProxy(Boolean withProxy) {
+        this.withProxy = withProxy;
+    }
 
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	public SDTest getTest() {
-		return test;
-	}
+    public void setBrowser(Browser browser) {
+        this.browser = browser;
+    }
 
-	public void setTest(SDTest test) {
-		this.test = test;
-	}
+    public void setProxy(Proxy proxy) {
+        this.proxy = proxy;
+    }
 
-	@Override
-	public String toString() {
-		return ToStringBuilder.reflectionToString(this);
-	}
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    public SDTest getTest() {
+        return test;
+    }
 
-	@Override
-	public int hashCode() {
-		return (new HashCodeBuilder()).append(this.id).toHashCode();
-	}
+    public void setTest(SDTest test) {
+        this.test = test;
+    }
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		TestRun rhs = (TestRun) obj;
-		return (new EqualsBuilder()).append(this.id, rhs.id).isEquals();
-	}
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this);
+    }
+
+    @Override
+    public int hashCode() {
+        return (new HashCodeBuilder()).append(this.id).toHashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (obj == null)
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        TestRun rhs = (TestRun) obj;
+        return (new EqualsBuilder()).append(this.id, rhs.id).isEquals();
+    }
 }
